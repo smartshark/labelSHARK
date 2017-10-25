@@ -1,0 +1,106 @@
+{
+    "name": "labelSHARK",
+    "author": "Alexander Trautsch",
+    "version": "0.10",
+    "plugin_type": "other",
+    "description": "Label commit data.",
+    "linux_libraries": [],
+    "requires": [
+        {
+            "name": "vcsSHARK",
+            "operator": ">=",
+            "version": "0.10"
+        },
+        {
+            "name": "issueSHARK",
+            "operator": ">=",
+            "version": "0.10"
+        }
+    ],
+    "arguments": [
+        {
+            "name": "plugin_path",
+            "required": true,
+            "position": 1,
+            "type": "install",
+            "description": "path to the root folder of the plugin"
+        },
+        {
+            "name": "plugin_path",
+            "required": true,
+            "position": 1,
+            "type": "execute",
+            "description": "path to the root folder of the plugin"
+        },
+        {
+            "name": "url",
+            "required": true,
+            "position": 2,
+            "type": "execute",
+            "description": "url of the project"
+        },
+        {
+            "name": "db_user",
+            "required": false,
+            "position": 3,
+            "type": "execute",
+            "description": "database user for the mongodb"
+        },
+        {
+            "name": "db_password",
+            "required": false,
+            "position": 4,
+            "type": "execute",
+            "description": "password for the user of the mongodb"
+        },
+        {
+            "name": "db_database",
+            "required": true,
+            "position": 5,
+            "type": "execute",
+            "description": "name of the database in the mongodb"
+        },
+        {
+            "name": "db_hostname",
+            "required": true,
+            "position": 6,
+            "type": "execute",
+            "description": "hostname of the server, where the mongodb runs on"
+        },
+        {
+            "name": "db_port",
+            "required": true,
+            "position": 7,
+            "type": "execute",
+            "description": "port on which the mongodb is listening on"
+        },
+        {
+            "name": "db_authentication",
+            "required": false,
+            "position": 8,
+            "type": "execute",
+            "description": "databse against which users are authenticated"
+        },
+        {
+            "name": "ssl_enabled",
+            "required": false,
+            "position": 9,
+            "type": "execute",
+            "description": "needs to be set if database uses ssl connection"
+        },
+        {
+            "name": "issue_systems",
+            "required": false,
+            "position": 10,
+            "type": "execute",
+            "description": "Comma separated list of issue system urls for the project or just all"
+        },
+        {
+            "name": "approaches",
+            "required": false,
+            "position": 11,
+            "type": "execute",
+            "description": "Comma separated list of labeling approaches or just all"
+        }
+    ]
+}

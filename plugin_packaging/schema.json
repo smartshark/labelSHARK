@@ -1,0 +1,17 @@
+{
+    "plugin": "labelSHARK_0.10",
+    "collections": [
+        {
+            "collection_name": "commit",
+            "fields": [
+                {
+                    "desc": "Labels for this commit from LabelSHARK.",
+                    "field_name": "labels",
+                    "logical_type": "Array",
+                    "type": "ArrayType",
+                    "sub_type": "ArrayType"
+                }
+            ]
+        }
+    ]
+}

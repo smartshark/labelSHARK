@@ -68,7 +68,8 @@ def main(args):
     # import every approach defined or all
     if args.approaches == 'all':
         # just list every module in the package and import it
-        for app in os.listdir('./approaches/'):
+        basepath = os.path.dirname(os.path.abspath(__file__))
+        for app in os.listdir(os.path.join(basepath, '/approaches/')):
             if app.endswith('.py') and app != '__init__.py':
                 __import__('approaches.{}'.format(app[:-3]))
     else:
@@ -83,8 +84,9 @@ def main(args):
     a.configure(config)
     for commit in Commit.objects.filter(vcs_system_id=vcs.id):
         labels = a.get_labels(commit)
-        # print('commit {}'.format(commit.revision_hash))
-        # print(labels)
+        log.info('commit: {}, labels: {}'.format(commit.revision_hash, labels))
+        # save the labels:
+        # commit.labels.upsert(labels)
 
     end = timeit.default_timer() - start
     log.info("Finished commit labeling in {:.5f}s".format(end))

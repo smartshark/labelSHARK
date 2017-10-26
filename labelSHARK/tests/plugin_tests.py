@@ -5,7 +5,7 @@ import sys
 import os
 import unittest
 
-from labelSHARK.core import LabelSHARK
+# from labelSHARK.core import LabelSHARK
 
 WRONG_BASECLASS_APPROACH = """
 #!/usr/bin/env python
@@ -19,7 +19,10 @@ class WrongApproach(object):
     def configure(self, config):
         pass
 
-    def get_labels(self, commit):
+    def set_commit(self, commit):
+        pass
+
+    def get_labels(self):
         pass
 """
 

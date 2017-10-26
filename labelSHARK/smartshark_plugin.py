@@ -2,7 +2,6 @@
 
 """Plugin for execution with serverSHARK."""
 
-import argparse
 import os
 import sys
 import logging
@@ -11,9 +10,9 @@ import copy
 
 from core import LabelSHARK
 
-from mongoengine import *
+from mongoengine import connect
 from pycoshark.mongomodels import VCSSystem, Commit, IssueSystem
-from pycoshark.utils import get_code_entity_state_identifier, create_mongodb_uri_string
+from pycoshark.utils import create_mongodb_uri_string
 from pycoshark.utils import get_base_argparser
 
 

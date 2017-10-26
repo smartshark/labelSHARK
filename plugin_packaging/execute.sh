@@ -29,4 +29,8 @@ if [ ! -z ${11+x} ] && [ ${11} != "None" ]; then
 	COMMAND="$COMMAND -ap all"
 fi
 
+if [ ! -z ${12+x} ] && [ ${12} != "None" ]; then
+    COMMAND="$COMMAND -la None"
+fi
+
 $COMMAND

@@ -69,7 +69,7 @@ def main(args):
     if args.approaches == 'all':
         # just list every module in the package and import it
         basepath = os.path.dirname(os.path.abspath(__file__))
-        for app in os.listdir(os.path.join(basepath, '/approaches/')):
+        for app in os.listdir(os.path.join(basepath, 'approaches/')):
             if app.endswith('.py') and app != '__init__.py':
                 __import__('approaches.{}'.format(app[:-3]))
     else:
@@ -83,7 +83,16 @@ def main(args):
     a = LabelSHARK()
     a.configure(config)
     for commit in Commit.objects.filter(vcs_system_id=vcs.id):
-        labels = a.get_labels(commit)
+        a.set_commit(commit)
+        labels = a.get_labels()
+        issue_links = a.get_issue_links()
+
+        # we get a dict of approach_name => [issue_link_ids]
+        for k, v in issue_links.items():
+            log.info('commit: {}, links: {}, from approach: {}'.format(commit.revision_hash, v, k))
+            if k == args.linking_approach:
+                log.info('using approach {} for issue links'.format(args.linking_approach))
+
         log.info('commit: {}, labels: {}'.format(commit.revision_hash, labels))
         # save the labels:
         # commit.labels.upsert(labels)
@@ -92,9 +101,9 @@ def main(args):
     log.info("Finished commit labeling in {:.5f}s".format(end))
 
 if __name__ == '__main__':
-    # we basically re-use the vcsSHARK argparse config here
     parser = get_base_argparser('Analyze the given URI. An URI should be a checked out GIT Repository.', '1.0.0')
     parser.add_argument('-u', '--url', help='URL of the project (e.g., GIT Url).', required=True)
     parser.add_argument('-is', '--issue_systems', help='Comma separated list of issue_system URLs or all for every ITS for this project.', required=True)
     parser.add_argument('-ap', '--approaches', help='Comma separated list of python module names that implement approaches or all for every approach.', required=True)
+    parser.add_argument('-la', '--linking_approach', help='Name of the labeling approach to use for linking issues to commits, or None.', required=True)
     main(parser.parse_args())

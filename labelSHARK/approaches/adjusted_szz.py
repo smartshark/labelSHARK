@@ -4,11 +4,11 @@
 import logging
 import re
 import copy
-import os
 
 from pycoshark.mongomodels import Issue, Event
 
 from core import LabelSHARK, BaseLabelApproach
+
 
 def remove_index(cls):
     tmp = copy.deepcopy(cls._meta)
@@ -25,37 +25,46 @@ Event._meta = remove_index(Event)
 
 @LabelSHARK.approach
 class AdjustedSZZ(BaseLabelApproach):
-    """This is basically SZZ but not only for bugzilla and with regular expressions instead
+    """This is basically SZZ [1] but not only for bugzilla and with regular expressions instead
     of flex.
-    
-    TODO: Paper Ref
+
+    1: When Do Changes Induce Fixes? Jacek Śliwerski et al. 2005
     """
 
     def configure(self, config):
         self._config = config
         self._log = logging.getLogger(self.__class__.__name__)
-    
-        # precomile regex
+
+        self._issue_links = []
+        self._labels = []
+
+        # precompile regex
         self._direct_link_jira = re.compile('(\s|^)(?P<ID>[A-Z][A-Z0-9_]+-[0-9]+)(\s|$)', re.M)
         self._direct_link_bz = re.compile('(bug|issue|bugzilla)[s]{0,1}[#\s]*(?P<ID>[0-9]+)', re.I | re.M)
         self._direct_link_gh = re.compile('(bug|issue)[s]{0,1}[#\s]*(?P<ID>[0-9]+)', re.I | re.M)
         self._keyword = re.compile('(\s|^)fix(e[ds])?|(\s|^)bugs?|defects?|patch', re.I | re.M)
 
-    def get_labels(self, commit):
+    def set_commit(self, commit):
+        self._issue_links = []
+        self._labels = []
+
         gscore = 0
         direct_links = []
         issue_found = False
 
         for its in self._config['itss']:
             if 'jira' in its.url:
-                score, ret, issue_found = self._jira_label(its, commit.message)
+                score, issues, issue_found = self._jira_label(its, commit.message)
             elif 'bugzilla' in its.url:
-                score, ret, issue_found = self._bz_label(its, commit.message)
+                score, issues, issue_found = self._bz_label(its, commit.message)
             elif 'github' in its.url:
-                score, ret, issue_found = self._gh_label(its, commit.message)
+                score, issues, issue_found = self._gh_label(its, commit.message)
 
-            direct_links.append((score, ret, issue_found))
-        
+            direct_links.append((score, issues, issue_found))
+
+            for r in issues:
+                self._issue_links.append(r.id)
+
         # no direct link in any linked ITS, fall back to keyword (only if we really did not find any issue, if we found a link that is a feature we skip this otherwise we would have a lot of false positives)
         for score, links, issue_found in direct_links:
             if issue_found:
@@ -66,9 +75,15 @@ class AdjustedSZZ(BaseLabelApproach):
 
         labelname = 'bugfix'
         if gscore > 0:
-            return [(labelname, True)]
+            self._labels.append((labelname, True))
 
-        return [(labelname, False)]
+        self._labels.append((labelname, False))
+
+    def get_labels(self):
+        return self._labels
+
+    def get_issue_links(self):
+        return self._issue_links
 
     def _keyword_label(self, message):
         score = 0

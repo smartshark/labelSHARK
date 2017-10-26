@@ -101,6 +101,13 @@
             "position": 11,
             "type": "execute",
             "description": "Comma separated list of labeling approaches or just all"
+        },
+        {
+            "name": "linking_approach",
+            "required": false,
+            "position": 12,
+            "type": "execute",
+            "description": "Approach used for linking issues to commits or just None"
         }
     ]
 }

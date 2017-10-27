@@ -1,4 +1,4 @@
-# coastSHARK
+# labelSHARK
 
 [![Build Status](https://travis-ci.org/smartshark/labelSHARK.svg?branch=master)](https://travis-ci.org/smartshark/labelSHARK)
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://smartshark.github.io/labelSHARK/)

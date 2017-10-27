@@ -4,33 +4,26 @@
         {
             "collection_name": "commit",
             "fields": [
-                {
-                   "sub_type": "StructType",
-                   "type":"ArrayType",
-                   "logical_type":"Name",
-                   "field_name":"labels",
-                   "desc": "A key value list of commit labels and values.",
-                   "fields": [
-                      {
-                         "type":"StringType",
-                         "logical_type":"Name",
-                         "field_name":"name",
-                         "desc": "Name of the label."
-                      },
-                      {
-                         "type":"DynamicType",
-                         "logical_type":"Name",
-                         "field_name":"value",
-                         "desc": "Value of the label."
-                      }
-                    ]
+            {  
+               "type": "StructType",
+               "logical_type": "Nested",
+               "field_name": "labels",
+               "desc": "Labels for this commit.",
+               "fields": [
+                  {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "BugfixLabel"],
+                     "field_name": "adjustedszz_bugfix",
+                     "desc": "True if this commit is a bug-fixing commit according to the adjustedszz approach, see https://smartshark.github.io/labelSHARK/approaches.html"
+                  }
+                ]
                 },
                 {
                     "desc": "Issue IDs linked to this commit.",
-                    "field_name": "issue_ids",
-                    "type":"ArrayType",
-                    "logical_type":"RID",
-                    "sub_type":"ObjectIdType",
+                    "field_name": "linked_issue_ids",
+                    "type": "ArrayType",
+                    "logical_type": "RID",
+                    "sub_type": "ObjectIdType",
                     "reference_to": "issue"
                 }
             ]

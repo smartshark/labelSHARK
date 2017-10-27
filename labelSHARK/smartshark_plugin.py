@@ -91,10 +91,14 @@ def main(args):
             # log.info('commit: {}, links: {}, from approach: {}'.format(commit.revision_hash, v, k))
             if k == args.linking_approach:
                 log.info('using approach {} for issue links'.format(args.linking_approach))
+                commit.linked_issue_ids = v
+                commit.save()
 
         log.info('commit: {}, labels: {}'.format(commit.revision_hash, labels))
-        # save the labels:
-        # commit.labels.upsert(labels)
+
+        # save the labels
+        tmp = {'set__labels__{}'.format(k): v for k, v in labels}
+        commit.upsert_one(**tmp)
 
     end = timeit.default_timer() - start
     log.info("Finished commit labeling in {:.5f}s".format(end))

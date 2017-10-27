@@ -88,7 +88,7 @@ def main(args):
 
         # we get a dict of approach_name => [issue_link_ids]
         for k, v in issue_links.items():
-            log.info('commit: {}, links: {}, from approach: {}'.format(commit.revision_hash, v, k))
+            # log.info('commit: {}, links: {}, from approach: {}'.format(commit.revision_hash, v, k))
             if k == args.linking_approach:
                 log.info('using approach {} for issue links'.format(args.linking_approach))
 

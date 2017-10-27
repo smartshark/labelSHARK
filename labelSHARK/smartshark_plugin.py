@@ -98,7 +98,7 @@ def main(args):
 
         # save the labels
         tmp = {'set__labels__{}'.format(k): v for k, v in labels}
-        commit.upsert_one(**tmp)
+        Commit.objects(id=commit.id).upsert_one(**tmp)
 
     end = timeit.default_timer() - start
     log.info("Finished commit labeling in {:.5f}s".format(end))

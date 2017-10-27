@@ -76,8 +76,8 @@ class AdjustedSZZ(BaseLabelApproach):
         labelname = 'bugfix'
         if gscore > 0:
             self._labels.append((labelname, True))
-
-        self._labels.append((labelname, False))
+        else:
+            self._labels.append((labelname, False))
 
     def get_labels(self):
         return self._labels

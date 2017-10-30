@@ -39,7 +39,7 @@ class AdjustedSZZ(BaseLabelApproach):
         self._labels = []
 
         # precompile regex
-        self._direct_link_jira = re.compile('(\s|^)(?P<ID>[A-Z][A-Z0-9_]+-[0-9]+)(\s|$)', re.M)
+        self._direct_link_jira = re.compile('(\s|^)(?P<ID>[A-Z][A-Z0-9_]+-[0-9]+)', re.M)
         self._direct_link_bz = re.compile('(bug|issue|bugzilla)[s]{0,1}[#\s]*(?P<ID>[0-9]+)', re.I | re.M)
         self._direct_link_gh = re.compile('(bug|issue)[s]{0,1}[#\s]*(?P<ID>[0-9]+)', re.I | re.M)
         self._keyword = re.compile('(\s|^)fix(e[ds])?|(\s|^)bugs?|defects?|patch', re.I | re.M)

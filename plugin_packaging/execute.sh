@@ -30,7 +30,7 @@ if [ ! -z ${11+x} ] && [ ${11} != "None" ]; then
 fi
 
 if [ ! -z ${12+x} ] && [ ${12} != "None" ]; then
-    COMMAND="$COMMAND -la None"
+    COMMAND="$COMMAND -la ${12}"
 fi
 
 $COMMAND

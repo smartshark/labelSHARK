@@ -39,7 +39,7 @@ class AdjustedSZZ(BaseLabelApproach):
         self._labels = []
 
         # precompile regex
-        self._direct_link_jira = re.compile('(\s|^)(?P<ID>[A-Z][A-Z0-9_]+-[0-9]+)', re.M)
+        self._direct_link_jira = re.compile('(?P<ID>[A-Z][A-Z0-9_]+-[0-9]+)', re.M)
         self._direct_link_bz = re.compile('(bug|issue|bugzilla)[s]{0,1}[#\s]*(?P<ID>[0-9]+)', re.I | re.M)
         self._direct_link_gh = re.compile('(bug|issue)[s]{0,1}[#\s]*(?P<ID>[0-9]+)', re.I | re.M)
         self._keyword = re.compile('(\s|^)fix(e[ds])?|(\s|^)bugs?|defects?|patch', re.I | re.M)
@@ -49,8 +49,8 @@ class AdjustedSZZ(BaseLabelApproach):
         self._labels = []
 
         gscore = 0
+        gissue_found = False
         direct_links = []
-        issue_found = False
 
         for its in self._config['itss']:
             if 'jira' in its.url:
@@ -62,16 +62,30 @@ class AdjustedSZZ(BaseLabelApproach):
 
             direct_links.append((score, issues, issue_found))
 
+            # linked issues are collected regardless of label
             for r in issues:
+                if r.id in self._issue_links:
+                    continue
                 self._issue_links.append(r.id)
 
-        # no direct link in any linked ITS, fall back to keyword (only if we really did not find any issue, if we found a link that is a feature we skip this otherwise we would have a lot of false positives)
+        # check the score for every issue found
+        # if not at least one is found with a score > 0 that means
+        # we have found issues but those were either wrong type or
+        # not closed
         for score, links, issue_found in direct_links:
+            # if we found at least one issue regardless of type
             if issue_found:
+                gissue_found = True
+            # if we found at least one issue with a score > 0 we break
+            # because that is our label
+            if issue_found and score > 0:
                 gscore = score
                 break
+        # if no direct link in any linked ITS, fall back to keyword
+        # but ONLY if we did not find any issue link
         else:
-            gscore = self._keyword_label(commit.message)
+            if not gissue_found:
+                gscore = self._keyword_label(commit.message)
 
         labelname = 'bugfix'
         if gscore > 0:
@@ -101,9 +115,9 @@ class AdjustedSZZ(BaseLabelApproach):
             try:
                 i = Issue.objects.get(issue_system_id=issue_system.id, external_id=m.group('ID').upper())
                 issue_found = True
+                ret.append(i)
                 if i.status in ['closed']:
                     score += 1
-                    ret.append(i)
 
             except Issue.DoesNotExist:
                 self._error('issue: {} does not exist'.format(m.group('ID')))
@@ -120,7 +134,7 @@ class AdjustedSZZ(BaseLabelApproach):
             try:
                 i = Issue.objects.get(issue_system_id=issue_system.id, external_id=m.group('ID').upper())
                 issue_found = True
-
+                ret.append(i)
                 if not i.issue_type:
                     # self._log.error("could not find issue type for issue: {}".format(m.group(1)))
                     self._error('could not find issue type for issue: {}'.format(m.group('ID')))
@@ -135,7 +149,6 @@ class AdjustedSZZ(BaseLabelApproach):
 
                 if resolved and fixed:
                     score += 1
-                    ret.append(i)
 
             except Issue.DoesNotExist:
                 # self._log.error('issue: {} does not exist'.format(m.group(1)))
@@ -152,6 +165,7 @@ class AdjustedSZZ(BaseLabelApproach):
             fixed = False
             try:
                 i = Issue.objects.get(issue_system_id=issue_system.id, external_id=m.group('ID').upper())
+                ret.append(i)
                 issue_found = True
                 if not i.issue_type:
                     # self._log.error("could not find issue type for issue: {}".format(m.group(0)))
@@ -168,11 +182,10 @@ class AdjustedSZZ(BaseLabelApproach):
 
                 if resolved and fixed:
                     score += 1
-                    ret.append(i)
 
             except Issue.DoesNotExist:
                 # self._log.error('issue: {} does not exist'.format(m.group(0)))
-                self._error('issue: {} does not exist'.format(m.group(1)))
+                self._error('issue: {} does not exist'.format(m.group('ID')))
                 pass
         return score, ret, issue_found
 

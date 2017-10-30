@@ -81,6 +81,10 @@ def main(args):
               'args': args}
     a = LabelSHARK()
     a.configure(config)
+
+    if args.linking_approach:
+        log.info('using approach {} for issue links'.format(args.linking_approach))
+
     for commit in Commit.objects.filter(vcs_system_id=vcs.id):
         a.set_commit(commit)
         labels = a.get_labels()
@@ -90,7 +94,8 @@ def main(args):
         for k, v in issue_links.items():
             # log.info('commit: {}, links: {}, from approach: {}'.format(commit.revision_hash, v, k))
             if k == args.linking_approach:
-                log.info('using approach {} for issue links'.format(args.linking_approach))
+                if v:
+                    log.info('commit: {}, linked to: {}'.format(commit.revision_hash, ','.join([str(l) for l in v])))
                 commit.linked_issue_ids = v
                 commit.save()
 

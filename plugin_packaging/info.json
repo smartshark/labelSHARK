@@ -90,14 +90,14 @@
         },
         {
             "name": "issue_systems",
-            "required": false,
+            "required": true,
             "position": 10,
             "type": "execute",
             "description": "Comma separated list of issue system urls for the project or just all"
         },
         {
             "name": "approaches",
-            "required": false,
+            "required": true,
             "position": 11,
             "type": "execute",
             "description": "Comma separated list of labeling approaches or just all"

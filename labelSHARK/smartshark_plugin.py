@@ -109,7 +109,7 @@ def main(args):
     log.info("Finished commit labeling in {:.5f}s".format(end))
 
 if __name__ == '__main__':
-    parser = get_base_argparser('Analyze the given URI. An URI should be a checked out GIT Repository.', '1.0.0')
+    parser = get_base_argparser('Analyze the given URI. An URI should be a GIT Repository address.', '1.0.0')
     parser.add_argument('-u', '--url', help='URL of the project (e.g., GIT Url).', required=True)
     parser.add_argument('-is', '--issue_systems', help='Comma separated list of issue_system URLs or all for every ITS for this project.', required=True)
     parser.add_argument('-ap', '--approaches', help='Comma separated list of python module names that implement approaches or all for every approach.', required=True)

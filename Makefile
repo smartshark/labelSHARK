@@ -38,4 +38,4 @@ deploy:
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)."
 	git push -fq https://$(TRAVIS_GH_TOKEN)@github.com/smartshark/labelSHARK.git gh-pages
 	@echo
-	@echo "Push finished. The HTML pages are pushed to https://smartshark.github.io/coastSHARK/"
+	@echo "Push finished. The HTML pages are pushed to https://smartshark.github.io/mynbouSHARK/"

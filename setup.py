@@ -16,7 +16,7 @@ setup(
     dependency_links=['git+https://github.com/smartshark/pycoSHARK.git@1.0.8#egg=pycoshark-1.0.8'],
     author='atrautsch',
     author_email='alexander.trautsch@cs.uni-goettingen.de',
-    url='https://github.com/smartshark/lableSHARK',
+    url='https://github.com/smartshark/labelSHARK',
     download_url='https://github.com/smartshark/labelSHARK/zipball/master',
     test_suite='labelSHARK.tests',
     packages=find_packages(),

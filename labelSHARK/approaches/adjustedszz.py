@@ -190,4 +190,5 @@ class AdjustedSZZ(BaseLabelApproach):
         return score, ret, issue_found
 
     def _error(self, message):
-        self._log.error(message)
+        # we log to warn because error gets to stdout in servershark
+        self._log.warn(message)

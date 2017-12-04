@@ -113,5 +113,5 @@ if __name__ == '__main__':
     parser.add_argument('-u', '--url', help='URL of the project (e.g., GIT Url).', required=True)
     parser.add_argument('-is', '--issue_systems', help='Comma separated list of issue_system URLs or all for every ITS for this project.', required=True)
     parser.add_argument('-ap', '--approaches', help='Comma separated list of python module names that implement approaches or all for every approach.', required=True)
-    parser.add_argument('-la', '--linking_approach', help='Name of the labeling approach to use for linking issues to commits, or None.', required=True)
+    parser.add_argument('-la', '--linking_approach', help='Name of the labeling approach to use for linking issues to commits, or None.', required=False, default=None)
     main(parser.parse_args())

@@ -3,6 +3,7 @@
     "collections": [
         {
             "collection_name": "commit",
+            "desc": "Information about the different commits of a project are stored in this collection",
             "fields": [
             {  
                "type": "StructType",

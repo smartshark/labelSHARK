@@ -16,6 +16,42 @@
                      "logical_type": ["CommitLabel", "BugfixLabel"],
                      "field_name": "adjustedszz_bugfix",
                      "desc": "True if this commit is a bug-fixing commit according to the adjustedszz approach, see https://smartshark.github.io/labelSHARK/approaches.html"
+                  },
+                  {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "BugfixLabel"],
+                     "field_name": "vibscc_bugfix",
+                     "desc": "True if this commit is a bug-fixing commit according to the vibscc approach, see https://smartshark.github.io/labelSHARK/approaches.html"
+                  },
+                  {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "RefactoringLabel"],
+                     "field_name": "vibscc_refactoring",
+                     "desc": "True if this commit is a refactoring commit according to the vibscc approach, see https://smartshark.github.io/labelSHARK/approaches.html"
+                  },
+                  {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "TestLabel"],
+                     "field_name": "vibscc_test",
+                     "desc": "True if this commit modifies only test files according to the vibscc approach, see https://smartshark.github.io/labelSHARK/approaches.html"
+                  },
+                  {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "FeatureLabel"],
+                     "field_name": "vibscc_feature",
+                     "desc": "True if this commit introduces new features according to the vibscc approach, see https://smartshark.github.io/labelSHARK/approaches.html"
+                  },
+                  {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "DocumentationLabel"],
+                     "field_name": "vibscc_documentation",
+                     "desc": "True if this commit introduces documentation (changes) according to the vibscc approach, see https://smartshark.github.io/labelSHARK/approaches.html"
+                  },
+                  {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "MaintenanceLabel"],
+                     "field_name": "vibscc_maintenance",
+                     "desc": "True if this commit is a maintenance commit according to the vibscc approach, see https://smartshark.github.io/labelSHARK/approaches.html"
                   }
                 ]
                 },

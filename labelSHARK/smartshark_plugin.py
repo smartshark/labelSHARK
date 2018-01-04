@@ -48,6 +48,9 @@ def main(args):
     # timing
     start = timeit.default_timer()
 
+    if args.log_level and hasattr(logging, args.log_level):
+        log.setLevel(getattr(logging, args.log_level))
+
     uri = create_mongodb_uri_string(args.db_user, args.db_password, args.db_hostname, args.db_port, args.db_authentication, args.ssl)
     connect(args.db_database, host=uri)
 
@@ -102,8 +105,9 @@ def main(args):
         log.info('commit: {}, labels: {}'.format(commit.revision_hash, labels))
 
         # save the labels
-        tmp = {'set__labels__{}'.format(k): v for k, v in labels}
-        Commit.objects(id=commit.id).upsert_one(**tmp)
+        if labels:
+            tmp = {'set__labels__{}'.format(k): v for k, v in labels}
+            Commit.objects(id=commit.id).upsert_one(**tmp)
 
     end = timeit.default_timer() - start
     log.info("Finished commit labeling in {:.5f}s".format(end))
@@ -114,4 +118,5 @@ if __name__ == '__main__':
     parser.add_argument('-is', '--issue_systems', help='Comma separated list of issue_system URLs or all for every ITS for this project.', required=True)
     parser.add_argument('-ap', '--approaches', help='Comma separated list of python module names that implement approaches or all for every approach.', required=True)
     parser.add_argument('-la', '--linking_approach', help='Name of the labeling approach to use for linking issues to commits, or None.', required=False, default=None)
+    parser.add_argument('-ll', '--log_level', help='Log Level for stdout INFO or DEBUG.', required=False, default='INFO')
     main(parser.parse_args())

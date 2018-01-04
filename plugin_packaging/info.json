@@ -108,6 +108,13 @@
             "position": 12,
             "type": "execute",
             "description": "Approach used for linking issues to commits or empty for no linking"
+        },
+        {
+            "name": "log_level",
+            "required": false,
+            "position": 13,
+            "type": "execute",
+            "description": "Log Level (DEBUG or INFO) if empty INFO is used."
         }
     ]
 }

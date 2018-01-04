@@ -5,8 +5,8 @@ from abc import ABCMeta, abstractmethod
 import pandas as pd
 from pycoshark.mongomodels import CodeEntityState, Hunk, File, FileAction, Commit, Refactoring
 
-from labelSHARK.approaches.vibscc.utils.mongo_pandas_utils import map_mongo_to_pandas
-from labelSHARK.approaches.vibscc.utils.pre_process_utils import stemmer_tokenize
+from ..utils.mongo_pandas_utils import map_mongo_to_pandas
+from ..utils.pre_process_utils import stemmer_tokenize
 
 
 class IDirectClassifier(metaclass=ABCMeta):

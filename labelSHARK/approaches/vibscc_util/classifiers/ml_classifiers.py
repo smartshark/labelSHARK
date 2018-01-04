@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from labelSHARK.approaches.vibscc.utils.pre_process_utils import stemmer_tokenizer,stemmer_tokenizer_message
-from labelSHARK.approaches.vibscc.utils.mongo_pandas_utils import DataFrameColumnExtracter
+from ..utils.pre_process_utils import stemmer_tokenizer,stemmer_tokenizer_message
+from ..utils.mongo_pandas_utils import DataFrameColumnExtracter
 from sklearn.feature_extraction.text import CountVectorizer
 from nltk.corpus import stopwords
 import string

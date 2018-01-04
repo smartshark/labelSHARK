@@ -25,4 +25,8 @@ if [ ! -z ${12+x} ] && [ ${12} != "None" ]; then
     COMMAND="$COMMAND -la ${12}"
 fi
 
+if [ ! -z ${13+x} ] && [ ${13} != "None" ]; then
+    COMMAND="$COMMAND -ll ${13}"
+fi
+
 $COMMAND

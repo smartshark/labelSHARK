@@ -42,7 +42,7 @@ class AdjustedSZZ(BaseLabelApproach):
         self._direct_link_jira = re.compile('(?P<ID>[A-Z][A-Z0-9_]+-[0-9]+)', re.M)
         self._direct_link_bz = re.compile('(bug|issue|bugzilla)[s]{0,1}[#\s]*(?P<ID>[0-9]+)', re.I | re.M)
         self._direct_link_gh = re.compile('(bug|issue)[s]{0,1}[#\s]*(?P<ID>[0-9]+)', re.I | re.M)
-        self._keyword = re.compile('(\s|^)fix(e[ds])?|(\s|^)bugs?|defects?|patch', re.I | re.M)
+        self._keyword = re.compile('(\s|^)fix(e[ds])?|(\s|^)bugs?|(\s|^)defects?|(\s|^)patch', re.I | re.M)
 
     def set_commit(self, commit):
         self._issue_links = []

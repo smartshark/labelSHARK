@@ -2,7 +2,7 @@
 
 PLUGIN_PATH=$1
 
-COMMAND="python3.5 $PLUGIN_PATH/smartshark_plugin.py -u $2 -DB $5 -H $6 -p $7 -is $10 -ap $11"
+COMMAND="python3.5 $PLUGIN_PATH/smartshark_plugin.py -u ${2} -DB ${5} -H ${6} -p ${7} -is ${10} -ap ${11}"
 
 
 if [ ! -z ${3+x} ] && [ ${3} != "None" ]; then

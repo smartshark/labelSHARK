@@ -119,4 +119,6 @@ if __name__ == '__main__':
     parser.add_argument('-ap', '--approaches', help='Comma separated list of python module names that implement approaches or all for every approach.', required=True)
     parser.add_argument('-la', '--linking_approach', help='Name of the labeling approach to use for linking issues to commits, or None.', required=False, default=None)
     parser.add_argument('-ll', '--log_level', help='Log Level for stdout INFO or DEBUG.', required=False, default='INFO')
+    parser.add_argument('-ph', '--proxy_host', help='Proxy hostname or IP address.', default=None)
+    parser.add_argument('-pp', '--proxy_port', help='Port of the proxy to use.', default=None)
     main(parser.parse_args())

@@ -156,6 +156,8 @@ class Vibscc(BaseLabelApproach):
         self._refactoring_classifier = Refactoring_Classifier(self._log)
 
         #ml-classifiers
+        if config['args'].proxy_host:
+            nltk.set_proxy('http://{}:{}'.format(config['args'].proxy_host, config['args'].proxy_port))
         nltk.download('stopwords')
         nltk.download('punkt')
         nltk.download('wordnet')

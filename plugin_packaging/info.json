@@ -115,6 +115,20 @@
             "position": 13,
             "type": "execute",
             "description": "Log Level (DEBUG or INFO) if empty INFO is used."
+        },
+        {
+            "name": "proxy_host",
+            "required": false,
+            "position": 14,
+            "type": "execute",
+            "description": "host to the proxy, if used"
+        },
+        {
+            "name": "proxy_port",
+            "required": false,
+            "position": 15,
+            "type": "execute",
+            "description": "port of the proxy"
         }
     ]
 }

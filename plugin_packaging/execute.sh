@@ -29,4 +29,12 @@ if [ ! -z ${13+x} ] && [ ${13} != "None" ]; then
     COMMAND="$COMMAND -ll ${13}"
 fi
 
+if [ ! -z ${14+x} ] && [ ${14} != "None" ]; then
+    COMMAND="$COMMAND -ph ${14}"
+fi
+
+if [ ! -z ${15+x} ] && [ ${15} != "None" ]; then
+    COMMAND="$COMMAND -pp ${15}"
+fi
+
 $COMMAND

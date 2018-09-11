@@ -41,7 +41,7 @@ class AdjustedSZZ(BaseLabelApproach):
         self._labels = []
 
         isbugfix = False
-        if len(commit.linked_issue_ids) > 0:
+        if commit.linked_issue_ids is not None and len(commit.linked_issue_ids) > 0:
             for issue in Issue.objects(id__in=commit.linked_issue_ids):
                 isbugfix |= labelutils.isbugfix(issue)
         else:

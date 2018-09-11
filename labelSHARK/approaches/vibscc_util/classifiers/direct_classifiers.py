@@ -8,6 +8,9 @@ from pycoshark.mongomodels import CodeEntityState, Hunk, File, FileAction, Commi
 from ..utils.mongo_pandas_utils import map_mongo_to_pandas
 from ..utils.pre_process_utils import stemmer_tokenize
 
+import warnings
+warnings.filterwarnings("ignore", 'This pattern has match groups')
+
 
 class IDirectClassifier(metaclass=ABCMeta):
     """Interface for classifiers which do not require training beforehand"""
@@ -25,11 +28,12 @@ class Keyword_Classifier(IDirectClassifier):
         bug_fix_pattern = r"\b(bug|fix|error|fail|repair|fixup)\b"
         df["bugfix"] = df.message.str.contains(bug_fix_pattern, case=False)
         df.bugfix = df.bugfix.map({True: 1, False: 0})
-        for row in df.itertuples():
-            if (("nan" != row.issue_type) & ("Bug" in row.issue_type)):
-                df.set_value(row.Index, "bugfix", 1)
-            elif (("nan" != row.issue_type) & (row.bugfix == 1)):
-                df.set_value(row.Index, "bugfix", 0)
+        if 'issue_type' in df:
+            for row in df.itertuples():
+                if (("nan" != row.issue_type) & ("Bug" in row.issue_type)):
+                    df.at[row.Index, "bugfix"] = 1
+                elif (("nan" != row.issue_type) & (row.bugfix == 1)):
+                    df.at[row.Index, "bugfix"] = 0
 
     def _classify_refactoring(self, df):
         refact_pattern = r"\b(refact|refactor|refactored|migrated|refactoring|restructure|encapsulate|param|parameters|abstract|rename\s+(method|variable|class)|(method|variable|class)\s+name|extract\s+(method|class|interface|code)|(moved|move)(?!.*(icon|icons|version))|getter|setter|checkstyle|pmd|typo.*(variable|method|class|code)|pull up|push down|merge.*(method|funcation|class)|convention|simple|simplify|replace|nest|inline|(remove|delete)\s+duplicate|split|wrapper|private|protect|delegate)\b"
@@ -54,15 +58,16 @@ class Keyword_Classifier(IDirectClassifier):
         df["documentation"] = 0
         for row in df.itertuples():
             if ((row.P_Documentation1 == 1) | (row.P_Documentation2 == 1)):
-                df.set_value(row.Index, "documentation", 1)
+                df.at[row.Index, "documentation"] = 1
 
     def _classify_feature(self, df):
         feature_pattern = r"\b((add|added).*(class|method|png|logo)|new|feature|import|^(no|not|never).*use|support|Synchronize)\b"
         df["feature"] = df.message.str.contains(feature_pattern, case=False)
         df.feature = df.feature.map({True: 1, False: 0})
-        for row in df.itertuples():
-            if (("nan" != row.issue_type) & ("Feature" in row.issue_type)):
-                df.set_value(row.Index, "feature", 1)
+        if 'issue_type' in df:
+            for row in df.itertuples():
+                if (("nan" != row.issue_type) & ("Feature" in row.issue_type)):
+                    df.at[row.Index, "feature"] = 1
 
     def _classify_maintainance(self, df):
         # maintainance_pattern_message = r"\b(clean|cleaning|cleanup|cleaned up|reordered|configuration|remove|upgrade|format|update|version|pom|dead|unused|api|library|cosmetic|organize|tabs|spaces|whitespace)\b"
@@ -76,11 +81,12 @@ class Keyword_Classifier(IDirectClassifier):
         df["maintainance"] = 0
         for row in df.itertuples():
             if ((row.P_Maintain_Message == 1) | (row.P_Maintain_files == 1)):
-                df.set_value(row.Index, "maintainance", 1)
+                df.at[row.Index, "maintainance"] = 1
 
     def classify_commit(self, commit_issue_df):
         df = commit_issue_df.copy()
-        df.issue_type = df.issue_type.apply(str)
+        if 'issue_type' in df:
+            df.issue_type = df.issue_type.apply(str)
         df.paths = df.paths.apply(str)
         df.message = df.message.apply(stemmer_tokenize)
         self._classify_bugfix(df)
@@ -160,19 +166,19 @@ class Test_Classifier(IDirectClassifier):
                 if (isinstance(row.imports, (list))):
                     for file_import in row.imports:
                         if re.search(test_pattern, file_import):
-                            commit_entities_df.set_value(row.Index, "candidate_test", 1)
+                            commit_entities_df.at[row.Index, "candidate_test"] = 1
                         elif re.search(test_pattern_python, file_import):
-                            commit_entities_df.set_value(row.Index, "candidate_test", 2)
+                            commit_entities_df.at[row.Index, "candidate_test"] = 2
                 elif pd.notnull(row.path):
                     path_file = row.path.rsplit('/', 1)
                     path = path_file[0]
                     file_name = path_file[-1]
                     if re.search(directory_pattern, path) and re.search(file_pattern, file_name):
-                        commit_entities_df.set_value(row.Index, "candidate_test", 1)
+                        commit_entities_df.at[row.Index, "candidate_test"] = 1
                     if re.search(directory_pattern, path) and re.search(file_pattern_python, file_name):
-                        commit_entities_df.set_value(row.Index, "candidate_test", 2)
+                        commit_entities_df.at[row.Index, "candidate_test"] = 2
                     elif re.search(directory_pattern, path) and re.search(file_pattern_other, file_name):
-                        commit_entities_df.set_value(row.Index, "candidate_test", 3)
+                        commit_entities_df.at[row.Index, "candidate_test"] = 3
 
             hunks = Hunk.objects(file_action_id__in=commit_entities_df[(commit_entities_df.candidate_test == 1)].
                                  file_action_id.values.tolist())
@@ -244,6 +250,7 @@ class Documentation_Classifier(IDirectClassifier):
                 return 0
 
         except Exception as exception:
+            #self._log.exception("Unexpected error during documentation classification")
             self._log.error("Unexpected error: {}".format(exception))
             return 0
 

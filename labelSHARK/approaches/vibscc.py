@@ -39,8 +39,7 @@ Refactoring._meta = remove_index(Refactoring)
 class Vibscc(BaseLabelApproach):
     """Run all classifiers and then perform voting between them to get final labels"""
 
-    def __init__(self, config):
-        self._config = config
+    def __init__(self):
         self._log = logging.getLogger(self.__class__.__name__)
 
         # direct classifiers
@@ -71,12 +70,13 @@ class Vibscc(BaseLabelApproach):
         commit_issue_files = pd.DataFrame({"_id": commit.pk, "message": commit.message}, index=[0])
 
         # link commit to issues
-        if len(commit.issue_links) > 0:
-            issues = Issue.objects(id__in=commit.issue_links).only("issue_type")
+        if len(commit.linked_issue_ids) > 0:
+            issues = Issue.objects(id__in=commit.linked_issue_ids).only("issue_type")
             issues_df = self._get_issues(issues)
             if (issues_df is not None) and ('issue_type' in issues_df):
                 issues_type = issues_df.issue_type.str.cat(sep='||')
                 commit_issue_files["issue_type"] = issues_type
+        commit_issue_files["issue_type"] = ''
 
         # append paths to commit
         commit_issue_files["paths"] = ""

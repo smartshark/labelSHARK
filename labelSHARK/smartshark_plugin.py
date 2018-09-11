@@ -92,7 +92,7 @@ if __name__ == '__main__':
     parser.add_argument('-u', '--url', help='URL of the project (e.g., GIT Url).', required=True)
     parser.add_argument('-ap', '--approaches',
                         help='Comma separated list of python module names that implement approaches or all for every approach.',
-                        required=True)
+                        required=False, default='all')
     parser.add_argument('-ll', '--log_level', help='Log Level for stdout INFO or DEBUG.', required=False,
                         default='INFO')
     main(parser.parse_args())

@@ -43,8 +43,7 @@ class LabelSHARK(object):
             try:
                 app.set_commit(commit)
             except Exception as e:
-                self._log.error('error setting commit in {}'.format(app_name))
-                self._log.exception(e)
+                self._log.exception('error setting commit in {}'.format(app_name))
 
     def get_labels(self):
         """Calls every registered commit labeling approach to collect the labels.

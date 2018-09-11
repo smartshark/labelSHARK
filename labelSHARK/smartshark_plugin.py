@@ -10,8 +10,8 @@ import copy
 
 from core import LabelSHARK
 
-from mongoengine import connect
-from pycoshark.mongomodels import VCSSystem, Commit
+from mongoengine import connect, DoesNotExist
+from pycoshark.mongomodels import VCSSystem, Commit, Project
 from pycoshark.utils import create_mongodb_uri_string
 from pycoshark.utils import get_base_argparser
 
@@ -53,7 +53,14 @@ def main(args):
                                     args.db_authentication, args.ssl)
     connect(args.db_database, host=uri)
 
-    vcs = VCSSystem.objects.get(url=args.url)
+    # Get the id of the project for which the code entities shall be merged
+    try:
+        project_id = Project.objects(name=args.project_name).get().id
+    except DoesNotExist:
+        log.error('Project %s not found!' % args.project_name)
+        sys.exit(1)
+
+    vcs = VCSSystem.objects(project_id=project_id).get()
 
     log.info("Starting commit labeling")
 
@@ -71,12 +78,15 @@ def main(args):
 
     # add specific configs
     labelshark = LabelSHARK()
+    commit_count = Commit.objects(vcs_system_id=vcs.id).count()
 
-    for commit in Commit.objects.filter(vcs_system_id=vcs.id):
+    for i,commit in enumerate(Commit.objects(vcs_system_id=vcs.id).only('id', 'revision_hash', 'vcs_system_id', 'message', 'linked_issue_ids')):
+        if i%100 == 0:
+            log.info("%i/%i  commits finished", i, commit_count)
         labelshark.set_commit(commit)
         labels = labelshark.get_labels()
 
-        log.info('commit: {}, labels: {}'.format(commit.revision_hash, labels))
+        #log.info('commit: {}, labels: {}'.format(commit.revision_hash, labels))
 
         # save the labels
         if labels:
@@ -89,7 +99,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = get_base_argparser('Analyze the given URI. An URI should be a GIT Repository address.', '1.0.0')
-    parser.add_argument('-u', '--url', help='URL of the project (e.g., GIT Url).', required=True)
+    parser.add_argument('-n', '--project-name', help='Name of the project.', required=True)
     parser.add_argument('-ap', '--approaches',
                         help='Comma separated list of python module names that implement approaches or all for every approach.',
                         required=False, default='all')

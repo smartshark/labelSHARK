@@ -17,6 +17,12 @@
                      "field_name": "adjustedszz_bugfix",
                      "desc": "True if this commit is a bug-fixing commit according to the adjustedszz approach, see https://smartshark.github.io/labelSHARK/approaches.html"
                   },
+                 {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "BugfixLabel"],
+                     "field_name": "issueonly_bugfix",
+                     "desc": "True if this commit is a bug-fixing commit according to the linked issue"
+                  },
                   {
                      "type": "BooleanType",
                      "logical_type": ["CommitLabel", "BugfixLabel"],

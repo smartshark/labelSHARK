@@ -23,6 +23,48 @@
                      "field_name": "issueonly_bugfix",
                      "desc": "True if this commit is a bug-fixing commit according to the linked issue"
                   },
+                 {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "TestLabel"],
+                     "field_name": "testchange_javacode",
+                     "desc": "True if this commit changed Java test code (e.g., JUnit)"
+                  },
+                 {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "RefactoringLabel"],
+                     "field_name": "refactoring_keywords",
+                     "desc": "True if a refactoring was detected using keyword matching"
+                  },
+                 {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "RefactoringLabel"],
+                     "field_name": "refactoring_codebased",
+                     "desc": "True a refactoring was detected based on the changes in the Java code"
+                  },
+                 {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "DocumentationLabel"],
+                     "field_name": "documentation_javamultiline",
+                     "desc": "True a a change to a multiline comment (/**/) was detected in the hunk of a java file"
+                  },
+                 {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "DocumentationLabel"],
+                     "field_name": "documentation_javainline",
+                     "desc": "True a a change to a inline comment (//) was detected in the hunk of a java file"
+                  },
+                 {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "DocumentationLabel"],
+                     "field_name": "documentation_technicaldept_add",
+                     "desc": "True if technical dept was admitted as an inline comment (// TODO/FIXME/XXX)"
+                  },
+                 {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "DocumentationLabel"],
+                     "field_name": "documentation_technicaldept_remove",
+                     "desc": "True if technical dept was removed from an inline comment (// TODO/FIXME/XXX)"
+                  },
                   {
                      "type": "BooleanType",
                      "logical_type": ["CommitLabel", "BugfixLabel"],

@@ -80,7 +80,7 @@ def main(args):
     labelshark = LabelSHARK()
     commit_count = Commit.objects(vcs_system_id=vcs.id).count()
 
-    for i,commit in enumerate(Commit.objects(vcs_system_id=vcs.id).only('id', 'revision_hash', 'vcs_system_id', 'message', 'linked_issue_ids')):
+    for i,commit in enumerate(Commit.objects(vcs_system_id=vcs.id).only('id', 'revision_hash', 'vcs_system_id', 'message', 'linked_issue_ids').timeout(False)):
         if i%100 == 0:
             log.info("%i/%i  commits finished", i, commit_count)
         labelshark.set_commit(commit)

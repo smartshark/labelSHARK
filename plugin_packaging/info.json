@@ -33,100 +33,107 @@
             "description": "path to the root folder of the plugin"
         },
         {
-            "name": "url",
+            "name": "repository_url",
             "required": true,
             "position": 2,
             "type": "execute",
             "description": "url of the project"
         },
+		{
+            "name": "project_name",
+            "required": true,
+            "position": 3,
+            "type": "execute",
+            "description": "name of the project"
+        },
         {
             "name": "db_user",
             "required": false,
-            "position": 3,
+            "position": 4,
             "type": "execute",
             "description": "database user for the mongodb"
         },
         {
             "name": "db_password",
             "required": false,
-            "position": 4,
+            "position": 5,
             "type": "execute",
             "description": "password for the user of the mongodb"
         },
         {
             "name": "db_database",
             "required": true,
-            "position": 5,
+            "position": 6,
             "type": "execute",
             "description": "name of the database in the mongodb"
         },
         {
             "name": "db_hostname",
             "required": true,
-            "position": 6,
+            "position": 7,
             "type": "execute",
             "description": "hostname of the server, where the mongodb runs on"
         },
         {
             "name": "db_port",
             "required": true,
-            "position": 7,
+            "position": 8,
             "type": "execute",
             "description": "port on which the mongodb is listening on"
         },
         {
             "name": "db_authentication",
             "required": false,
-            "position": 8,
+            "position": 9,
             "type": "execute",
             "description": "databse against which users are authenticated"
         },
         {
             "name": "ssl_enabled",
             "required": false,
-            "position": 9,
+            "position": 10,
             "type": "execute",
             "description": "needs to be set if database uses ssl connection"
         },
         {
             "name": "issue_systems",
             "required": true,
-            "position": 10,
+            "position": 11,
             "type": "execute",
             "description": "Comma separated list of issue system urls for the project or just all"
         },
         {
             "name": "approaches",
             "required": true,
-            "position": 11,
+            "position": 12,
             "type": "execute",
             "description": "Comma separated list of labeling approaches or just all"
         },
         {
             "name": "linking_approach",
             "required": false,
-            "position": 12,
+            "position": 13,
             "type": "execute",
             "description": "Approach used for linking issues to commits or empty for no linking"
         },
         {
             "name": "log_level",
             "required": false,
-            "position": 13,
+            "position": 14,
             "type": "execute",
             "description": "Log Level (DEBUG or INFO) if empty INFO is used."
         },
         {
             "name": "proxy_host",
             "required": false,
-            "position": 14,
+            "position": 15,
             "type": "execute",
             "description": "host to the proxy, if used"
         },
         {
             "name": "proxy_port",
             "required": false,
-            "position": 15,
+            "position": 16,
             "type": "execute",
             "description": "port of the proxy"
         }

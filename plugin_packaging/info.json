@@ -1,7 +1,7 @@
 {
     "name": "labelSHARK",
     "author": "Alexander Trautsch",
-    "version": "0.11",
+    "version": "2.0.1",
     "plugin_type": "other",
     "description": "Label commit data.",
     "linux_libraries": [],
@@ -9,12 +9,12 @@
         {
             "name": "vcsSHARK",
             "operator": ">=",
-            "version": "0.10"
+            "version": "0.1.0"
         },
         {
             "name": "issueSHARK",
             "operator": ">=",
-            "version": "0.10"
+            "version": "0.1.0"
         }
     ],
     "arguments": [

@@ -96,6 +96,6 @@
             "position": 11,
             "type": "execute",
             "description": "Comma separated list of labeling approaches or just all"
-        },
+        }
     ]
 }

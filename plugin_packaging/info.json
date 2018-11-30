@@ -7,7 +7,7 @@
     "linux_libraries": [],
     "requires": [
         {
-            "name": "linkShark",
+            "name": "linkSHARK",
             "operator": ">=",
             "version": "2.0.0"
         }

@@ -11,9 +11,8 @@ If you want to include a labeling approach read the full documentation provided 
 
 ### via PIP
 ```bash
-pip install https://github.com/smartshark/labelSHARK/zipball/master --process-dependency-links
+pip install https://github.com/smartshark/labelSHARK/zipball/master
 ```
-The --process-dependency-links switch is needed because we install pycoSHARK as a requirement directly from git.
 
 ### via setup.py
 ```bash

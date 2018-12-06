@@ -13,7 +13,6 @@ setup(
     version='2.0.1',
     description='Commit labeling for smartSHARK.',
     install_requires=['mongoengine', 'pymongo', 'pycoshark>=1.0.21', 'numpy', 'pandas', 'nltk', 'scikit-learn'],
-    dependency_links=['git+https://github.com/smartshark/pycoSHARK.git@1.0.21#egg=pycoshark-1.0.21'],
     author='atrautsch',
     author_email='alexander.trautsch@cs.uni-goettingen.de',
     url='https://github.com/smartshark/labelSHARK',

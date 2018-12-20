@@ -45,6 +45,7 @@ class TestPluginStructure(unittest.TestCase):
         except Exception as e:
             self.assertTrue('not of type BaseLabelApproach' in str(e))
 
+        os.unlink('./labelSHARK/approaches/test.py')
         # 3. test plugin
         # l = LabelSHARK()
         # l.configure({})

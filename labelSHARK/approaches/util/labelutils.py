@@ -30,7 +30,7 @@ def _is_jira_featureadd(issue):
     is_added_feature = False
     featureadd_types = set(['new feature','proposal','improvement','wish','planned work','request'])
     if not issue.issue_type:
-        log.error('could not find issue type for issue %s' % issue.id)
+        log.warning('could not find issue type for issue %s' % issue.id)
     else:
         if issue.issue_type and issue.issue_type.lower() in featureadd_types:
             is_added_feature = _jira_is_resolved_and_fixed(issue)
@@ -39,7 +39,7 @@ def _is_jira_featureadd(issue):
 def _jira_isbugfix(issue):
     is_fixed_bug = False
     if not issue.issue_type:
-        log.error('could not find issue type for issue %s' % issue.id)
+        log.warning('could not find issue type for issue %s' % issue.id)
     else:
         if issue.issue_type and issue.issue_type.lower() == 'bug':
             is_fixed_bug = _jira_is_resolved_and_fixed(issue)

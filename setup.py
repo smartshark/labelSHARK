@@ -10,7 +10,7 @@ if not sys.version_info[0] == 3:
 
 setup(
     name='labelSHARK',
-    version='2.0.1',
+    version='2.1.0',
     description='Commit labeling for smartSHARK.',
     install_requires=['mongoengine', 'pymongo', 'pycoshark>=1.0.26', 'numpy', 'pandas', 'nltk', 'scikit-learn'],
     author='atrautsch',

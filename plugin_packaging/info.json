@@ -1,7 +1,7 @@
 {
     "name": "labelSHARK",
     "author": "Alexander Trautsch",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "plugin_type": "other",
     "description": "Label commit data.",
     "linux_libraries": [],

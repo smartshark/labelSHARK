@@ -33,11 +33,14 @@ class IssueOnly(BaseLabelApproach):
         self._labels = []
 
         isbugfix = False
+        isfeatureadd = False
         if commit.linked_issue_ids is not None and len(commit.linked_issue_ids) > 0:
             for issue in Issue.objects(id__in=commit.linked_issue_ids):
                 isbugfix |= labelutils.isbugfix(issue)
+                isfeatureadd |= labelutils.isfeatureadd(issue)
 
         self._labels.append(('bugfix', isbugfix))
+        self._labels.append(('featureadd', isbugfix))
 
     def get_labels(self):
         return self._labels

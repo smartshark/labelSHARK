@@ -41,7 +41,11 @@ class TestChangeLabel(BaseLabelApproach):
             code_entities = CodeEntityState.objects(id__in=commit.code_entity_states, ce_type='file').only('id',
                                                                                                            'long_name',
                                                                                                            'imports')
-        for file_action in FileAction.objects(commit_id=commit.id):
+        if len(commit.parents)>0:
+            file_actions = FileAction.objects(commit_id=commit.id, parent_revision_hash=commit.parents[0])
+        else:
+            file_actions = FileAction.objects(commit_id=commit.id)
+        for file_action in file_actions:
             file = File.objects(id=file_action.file_id).get()
             if code_entities.filter(long_name=file.path).count() > 0:
                 code_entity = code_entities.filter(long_name=file.path).get()

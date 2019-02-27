@@ -27,7 +27,11 @@ class DocumentationChangeLabel(BaseLabelApproach):
         has_inline_change = False
         has_technical_dept_add = False
         has_technical_dept_remove = False
-        for file_action in FileAction.objects(commit_id=commit.id):
+        if len(commit.parents)>0:
+            file_actions = FileAction.objects(commit_id=commit.id, parent_revision_hash=commit.parents[0])
+        else:
+            file_actions = FileAction.objects(commit_id=commit.id)
+        for file_action in file_actions:
             file = File.objects(id=file_action.file_id).get()
             is_filename_match = self._filename_pattern_java.match(file.path) is not None
             if is_filename_match:

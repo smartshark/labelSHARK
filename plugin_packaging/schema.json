@@ -24,6 +24,12 @@
                   },
                  {
                      "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "FeatureAddLabel"],
+                     "field_name": "issueonly_featureadd",
+                     "desc": "True if this commit added a feature according to the linked issue"
+                  },
+                 {
+                     "type": "BooleanType",
                      "logical_type": ["CommitLabel", "TestLabel"],
                      "field_name": "testchange_javacode",
                      "desc": "True if this commit changed Java test code (e.g., JUnit)"

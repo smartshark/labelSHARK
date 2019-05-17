@@ -10,9 +10,9 @@ if not sys.version_info[0] == 3:
 
 setup(
     name='labelSHARK',
-    version='2.1.0',
+    version='2.1.1',
     description='Commit labeling for smartSHARK.',
-    install_requires=['mongoengine', 'pymongo', 'pycoshark>=1.0.26'],
+    install_requires=['mongoengine', 'pymongo', 'pycoshark>=1.0.31'],
     author='atrautsch',
     author_email='alexander.trautsch@cs.uni-goettingen.de',
     url='https://github.com/smartshark/labelSHARK',

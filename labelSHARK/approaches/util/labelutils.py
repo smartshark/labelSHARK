@@ -1,6 +1,7 @@
 import logging
 
 from pycoshark.mongomodels import Event, IssueSystem
+from pycoshark.utils import jira_is_resolved_and_fixed
 
 log = logging.getLogger('labelSHARK')
 
@@ -33,7 +34,7 @@ def _is_jira_featureadd(issue):
         log.warning('could not find issue type for issue %s' % issue.id)
     else:
         if issue.issue_type and issue.issue_type.lower() in featureadd_types:
-            is_added_feature = _jira_is_resolved_and_fixed(issue)
+            is_added_feature = jira_is_resolved_and_fixed(issue)
     return is_added_feature
 
 def _jira_isbugfix(issue):
@@ -42,21 +43,8 @@ def _jira_isbugfix(issue):
         log.warning('could not find issue type for issue %s' % issue.id)
     else:
         if issue.issue_type and issue.issue_type.lower() == 'bug':
-            is_fixed_bug = _jira_is_resolved_and_fixed(issue)
+            is_fixed_bug = jira_is_resolved_and_fixed(issue)
     return is_fixed_bug
-
-def _jira_is_resolved_and_fixed(issue):
-    resolved = False
-    fixed = False
-    if issue.status in ['resolved', 'closed']:
-        resolved = True
-        fixed |= issue.resolution.lower() != 'duplicated'
-
-    for e in Event.objects.filter(issue_id=issue.id):
-        resolved |= e.status is not None and e.status.lower() == 'status' and e.new_value is not None and e.new_value.lower() in \
-                    ['resolved', 'closed']
-        fixed |= e.status is not None and e.status.lower() == 'resolution' and e.new_value is not None and e.new_value.lower() == 'fixed'
-    return resolved and fixed
 
 def _bz_isbugfix(issue):
     resolved = False

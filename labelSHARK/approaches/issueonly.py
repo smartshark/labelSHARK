@@ -38,6 +38,10 @@ class IssueOnly(BaseLabelApproach):
             for issue in Issue.objects(id__in=commit.linked_issue_ids):
                 isbugfix |= labelutils.isbugfix(issue)
                 isfeatureadd |= labelutils.isfeatureadd(issue)
+                if issue.parent_issue_id:
+                    parent_issue = Issue.objects(id=issue.parent_issue_id).get()
+                    isbugfix |= labelutils.isbugfix(parent_issue)
+                    isfeatureadd |= labelutils.isfeatureadd(parent_issue)
 
         self._labels.append(('bugfix', isbugfix))
         self._labels.append(('featureadd', isbugfix))

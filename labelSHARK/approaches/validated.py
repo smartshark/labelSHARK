@@ -22,12 +22,12 @@ class IssueOnly(BaseLabelApproach):
         isbugfix = False
         if commit.fixed_issue_ids is not None and len(commit.fixed_issue_ids) > 0:
             for issue in Issue.objects(id__in=commit.fixed_issue_ids):
-                is_fixed_bug = False
-                if not issue.issue_type:
-                    self._log.warning('could not find issue type for issue %s' % issue.id)
-                else:
-                    if issue.issue_type_verified and issue.issue_type_verified.lower() == 'bug':
-                        isbugfix |= jira_is_resolved_and_fixed(issue)
+                if issue.issue_type_verified and issue.issue_type_verified.lower() == 'bug':
+                    isbugfix |= jira_is_resolved_and_fixed(issue)
+                if issue.parent_issue_id:
+                    parent_issue = Issue.objects(id=issue.parent_issue_id).get()
+                    if parent_issue.issue_type_verified and parent_issue.issue_type_verified.lower() == 'bug':
+                        isbugfix |= jira_is_resolved_and_fixed(parent_issue)
         self._labels.append(('bugfix', isbugfix))
 
     def get_labels(self):

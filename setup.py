@@ -10,9 +10,11 @@ if not sys.version_info[0] == 3:
 
 setup(
     name='labelSHARK',
-    version='2.1.2',
+    version='2.2.0',
     description='Commit labeling for smartSHARK.',
-    install_requires=['mongoengine', 'pymongo', 'pycoshark>=1.2.6'],
+    install_requires=['mongoengine', 'pymongo', 'pycoshark>=1.3.1', 'skift',
+                      'fasttext @ https://github.com/facebookresearch/fastText/tree/master#egg-fasttext-0.10.0',],
+    dependency_links=['https://github.com/facebookresearch/fastText/tree/master#egg-fasttext-0.10.0'],
     author='atrautsch',
     author_email='alexander.trautsch@cs.uni-goettingen.de',
     url='https://github.com/smartshark/labelSHARK',

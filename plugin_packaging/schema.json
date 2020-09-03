@@ -24,6 +24,18 @@
                   },
                  {
                      "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "BugfixLabel"],
+                     "field_name": "issuefasttext_bugfix",
+                     "desc": "True if this commit is a bug-fixing commit according to the linked issue and if the issue type is predicted as bugfix using a text classifier"
+                  },
+                 {
+                     "type": "BooleanType",
+                     "logical_type": ["CommitLabel", "BugfixLabel"],
+                     "field_name": "validated_bugfix",
+                     "desc": "True if this commit is a manually validated bug fixing commit, i..e, there is a validated link to a validated bug issue"
+                  },
+                 {
+                     "type": "BooleanType",
                      "logical_type": ["CommitLabel", "FeatureAddLabel"],
                      "field_name": "issueonly_featureadd",
                      "desc": "True if this commit added a feature according to the linked issue"

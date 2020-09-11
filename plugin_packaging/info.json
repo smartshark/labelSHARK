@@ -1,7 +1,7 @@
 {
     "name": "labelSHARK",
     "author": "Steffen Herbold",
-    "version": "2.1.1",
+    "version": "2.2.0",
     "plugin_type": "other",
     "description": "Label commit data.",
     "linux_libraries": [],

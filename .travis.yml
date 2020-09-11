@@ -12,8 +12,8 @@ before_install:
   - pip install ghp_import
 
 script:
-  - sudo python3 setup.py install
-  - sudo python3 setup.py test
+  - python setup.py install
+  - python setup.py test
 
 after_success:
   - make deploy

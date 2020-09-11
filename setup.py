@@ -8,7 +8,7 @@ if not sys.version_info[0] == 3:
     print('only python3 supported!')
     sys.exit(1)
 if not sys.version_info[1] > 5:
-    print('only python > 3.5 supported!')
+    print('only python > 3.5 supported, got: {}.{}'.format(sys.version_info[0], sys.version_info[1]))
     sys.exit(1)
 
 setup(

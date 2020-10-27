@@ -1,4 +1,5 @@
 import logging
+import pathlib
 import pickle
 import pandas as pd
 
@@ -19,15 +20,17 @@ class IssueFasttext(BaseLabelApproach):
     def __init__(self):
         self._log = logging.getLogger(self.__class__.__name__)
         self._labels = []
+        basepath = pathlib.Path(__file__).parent.parent.absolute()
         try:
-            self._text_clf = pickle.load(open('classifier/ft_text_clf.p', 'rb'))
-            self._title_clf = pickle.load(open('classifier/ft_title_clf.p', 'rb'))
-        except:
+            self._text_clf = pickle.load(open('{}/classifier/ft_text_clf.p'.format(basepath), 'rb'))
+            self._title_clf = pickle.load(open('{}/classifier/ft_title_clf.p'.format(basepath), 'rb'))
+        except Exception as e:
             self._text_clf = None
             self._title_clf = None
             self._log.warning('Approach issuefasttext not working. could not load ft classifiers. '
                               'You need to download the classifiers () and place them in the labelSHARK/classifiers '
                               'folder.')
+            self._log.exception(e)
             pass
 
     def set_commit(self, commit):

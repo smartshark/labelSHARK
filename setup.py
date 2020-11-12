@@ -13,7 +13,7 @@ if not sys.version_info[1] > 5:
 
 setup(
     name='labelSHARK',
-    version='2.2.0',
+    version='2.2.1',
     description='Commit labeling for smartSHARK.',
     install_requires=['pandas', 'mongoengine', 'pymongo', 'pycoshark>=1.3.1', 'skift',
                       'fasttext @ https://github.com/facebookresearch/fastText/tarball/master#egg-fasttext-0.10.0',],

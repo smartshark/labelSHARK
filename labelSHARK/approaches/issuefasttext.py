@@ -9,7 +9,6 @@ from core import LabelSHARK, BaseLabelApproach
 from approaches.util import labelutils
 
 
-
 @LabelSHARK.approach
 class IssueFasttext(BaseLabelApproach):
     """
@@ -35,7 +34,7 @@ class IssueFasttext(BaseLabelApproach):
 
     def set_commit(self, commit):
         if self._text_clf is None or self._title_clf is None:
-            return # do nothing without the classifiers
+            return  # do nothing without the classifiers
 
         self._labels = []
 
@@ -59,9 +58,8 @@ class IssueFasttext(BaseLabelApproach):
         X = pd.DataFrame({'description': [desc.replace('\n', '')], 'title': [title.replace('\n', '')]})
         proba_text = self._text_clf.predict_proba(X)
         proba_title = self._title_clf.predict_proba(X)
-        proba_total = (proba_text+proba_title)/2
-        return proba_total[0, 1]>0.5
-
+        proba_total = (proba_text + proba_title) / 2
+        return bool(proba_total[0, 1] > 0.5)
 
     def get_labels(self):
         return self._labels

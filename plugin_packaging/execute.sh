@@ -1,12 +1,18 @@
-#!/bin/sh
+#!/bin/bash
+
 
 # hpc special case
-module load gcc/9.2.0
+if [ ! -z "$SLURM_JOB_ID" ]; then
+    module load gcc/9.2.0
+fi
 
 PLUGIN_PATH=$1
 
-COMMAND="python3.6 $PLUGIN_PATH/smartshark_plugin.py -DB ${4} -H ${5} -p ${6} --project-name ${10} --approaches ${11}"
-
+if [ ! -z "$SLURM_JOB_ID" ]; then
+    COMMAND="python3.6 $PLUGIN_PATH/smartshark_plugin.py -DB ${4} -H ${5} -p ${6} --project-name ${10} --approaches ${11}"
+else
+    COMMAND="python $PLUGIN_PATH/smartshark_plugin.py -DB ${4} -H ${5} -p ${6} --project-name ${10} --approaches ${11}"
+fi
 
 if [ ! -z ${2+x} ] && [ ${2} != "None" ]; then
 	COMMAND="$COMMAND --db-user ${2}"

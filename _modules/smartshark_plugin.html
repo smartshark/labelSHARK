@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>smartshark_plugin &mdash; labelSHARK 2.2.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> labelSHARK
+          
+
+          
+            
+            <img src="../_static/SmartSHARK_read_the_docs_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.2.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../extension.html">Extension</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../approaches.html">Approaches</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">labelSHARK</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>smartshark_plugin</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for smartshark_plugin</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="sd">&quot;&quot;&quot;Plugin for execution with serverSHARK.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">timeit</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">LabelSHARK</span>
+
+<span class="kn">from</span> <span class="nn">mongoengine</span> <span class="kn">import</span> <span class="n">connect</span><span class="p">,</span> <span class="n">DoesNotExist</span>
+<span class="kn">from</span> <span class="nn">pycoshark.mongomodels</span> <span class="kn">import</span> <span class="n">VCSSystem</span><span class="p">,</span> <span class="n">Commit</span><span class="p">,</span> <span class="n">Project</span>
+<span class="kn">from</span> <span class="nn">pycoshark.utils</span> <span class="kn">import</span> <span class="n">create_mongodb_uri_string</span>
+<span class="kn">from</span> <span class="nn">pycoshark.utils</span> <span class="kn">import</span> <span class="n">get_base_argparser</span>
+
+
+<span class="k">def</span> <span class="nf">remove_index</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_meta</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;indexes&#39;</span> <span class="ow">in</span> <span class="n">tmp</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">del</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;indexes&#39;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;index_specs&#39;</span><span class="p">]</span>
+    <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;index_specs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">tmp</span>
+
+
+<span class="n">VCSSystem</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="n">remove_index</span><span class="p">(</span><span class="n">VCSSystem</span><span class="p">)</span>
+<span class="n">Commit</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="n">remove_index</span><span class="p">(</span><span class="n">Commit</span><span class="p">)</span>
+
+<span class="c1"># set up logging, we log everything to stdout except for errors which go to stderr</span>
+<span class="c1"># this is then picked up by serverSHARK</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;labelSHARK&#39;</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+
+<span class="n">i</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="n">e</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+<span class="n">log</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../api.html#smartshark_plugin.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="c1"># timing</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">default_timer</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">log_level</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logging</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">log_level</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">logging</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">log_level</span><span class="p">))</span>
+
+    <span class="n">uri</span> <span class="o">=</span> <span class="n">create_mongodb_uri_string</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">db_user</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">db_password</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">db_hostname</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">db_port</span><span class="p">,</span>
+                                    <span class="n">args</span><span class="o">.</span><span class="n">db_authentication</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">ssl</span><span class="p">)</span>
+    <span class="n">connect</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">db_database</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">uri</span><span class="p">)</span>
+
+    <span class="c1"># Get the id of the project for which the code entities shall be merged</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">project_id</span> <span class="o">=</span> <span class="n">Project</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">project_name</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+    <span class="k">except</span> <span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Project </span><span class="si">%s</span><span class="s1"> not found!&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">project_name</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">vcs</span> <span class="o">=</span> <span class="n">VCSSystem</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting commit labeling&quot;</span><span class="p">)</span>
+
+    <span class="c1"># import every approach defined or all</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">approaches</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="c1"># just list every module in the package and import it</span>
+        <span class="n">basepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">app</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basepath</span><span class="p">,</span> <span class="s1">&#39;approaches/&#39;</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">app</span> <span class="o">!=</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">:</span>
+                <span class="nb">__import__</span><span class="p">(</span><span class="s1">&#39;approaches.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">app</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># if we have a list of approaches import only those</span>
+        <span class="k">for</span> <span class="n">app</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">approaches</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
+            <span class="nb">__import__</span><span class="p">(</span><span class="s1">&#39;approaches.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">app</span><span class="p">))</span>
+
+    <span class="c1"># add specific configs</span>
+    <span class="n">labelshark</span> <span class="o">=</span> <span class="n">LabelSHARK</span><span class="p">()</span>
+    <span class="n">commit_count</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="n">vcs</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">commit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="n">vcs</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;revision_hash&#39;</span><span class="p">,</span> <span class="s1">&#39;vcs_system_id&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="s1">&#39;linked_issue_ids&#39;</span><span class="p">,</span> <span class="s1">&#39;parents&#39;</span><span class="p">,</span> <span class="s1">&#39;fixed_issue_ids&#39;</span><span class="p">,</span> <span class="s1">&#39;szz_issue_ids&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">timeout</span><span class="p">(</span><span class="kc">False</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">i</span><span class="o">%</span><span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2">/</span><span class="si">%i</span><span class="s2">  commits finished&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">commit_count</span><span class="p">)</span>
+        <span class="n">labelshark</span><span class="o">.</span><span class="n">set_commit</span><span class="p">(</span><span class="n">commit</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">labelshark</span><span class="o">.</span><span class="n">get_labels</span><span class="p">()</span>
+
+        <span class="c1">#log.info(&#39;commit: {}, labels: {}&#39;.format(commit.revision_hash, labels))</span>
+
+        <span class="c1"># save the labels</span>
+        <span class="k">if</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;set__labels__</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">}</span>
+            <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">upsert_one</span><span class="p">(</span><span class="o">**</span><span class="n">tmp</span><span class="p">)</span>
+
+    <span class="n">end</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">default_timer</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finished commit labeling in </span><span class="si">{:.5f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">end</span><span class="p">))</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">get_base_argparser</span><span class="p">(</span><span class="s1">&#39;Analyze the given URI. An URI should be a GIT Repository address.&#39;</span><span class="p">,</span> <span class="s1">&#39;1.0.0&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span> <span class="s1">&#39;--project-name&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Name of the project.&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-ap&#39;</span><span class="p">,</span> <span class="s1">&#39;--approaches&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Comma separated list of python module names that implement approaches or all for every approach.&#39;</span><span class="p">,</span>
+                        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-ll&#39;</span><span class="p">,</span> <span class="s1">&#39;--log_level&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Log Level for stdout INFO or DEBUG.&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">)</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2017, Alexander Trautsch
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

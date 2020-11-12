@@ -1,0 +1,316 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Extension &mdash; labelSHARK 2.2.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Documentation" href="api.html" />
+    <link rel="prev" title="Welcome to labelSHARK’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> labelSHARK
+          
+
+          
+            
+            <img src="_static/SmartSHARK_read_the_docs_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.2.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Extension</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#minimum-example">Minimum Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extending-the-schema-for-a-new-approach">Extending the schema for a new approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#special-case-missing-index-rights-in-mongdb">Special case: missing index rights in MongDB</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="approaches.html">Approaches</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">labelSHARK</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Extension</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/extension.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="extension">
+<h1>Extension<a class="headerlink" href="#extension" title="Permalink to this headline">¶</a></h1>
+<p>Each approach is implemented in a python module in the approaches folder.
+It must inherit from <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLabelApproach</span></code> and must implement configure and get_labels functions.
+It must also include the &#64;LabelSHARK.approach decorator that registers the class with <em>labelSHARK</em>.</p>
+<p>The configure function is called with a config dict which includes a list of <a class="reference external" href="https://smartshark.github.io/pycoSHARK/api.html#pycoshark.mongomodels.IssueSystem" title="(in pycoSHARK v1.2)"><code class="docutils literal notranslate"><span class="pre">pycoshark.mongomodels.IssueSystem</span></code></a> under the key <strong>its</strong>.</p>
+<p>The set_commit function is called with a <a class="reference external" href="https://smartshark.github.io/pycoSHARK/api.html#pycoshark.mongomodels.Commit" title="(in pycoSHARK v1.2)"><code class="docutils literal notranslate"><span class="pre">pycoshark.mongomodels.Commit</span></code></a>.
+After that the get_labels function is called to request the labels for the commit.</p>
+<p>Each approach must also extend the schema for the labelSHARK plugin.</p>
+<div class="section" id="minimum-example">
+<h2>Minimum Example<a class="headerlink" href="#minimum-example" title="Permalink to this headline">¶</a></h2>
+<p>Below is the code for a minimum working example which labels every commit as bugfix commit.
+The code should be placed in the approaches directory in a python file which name is the approach itself, e.g., approaches/szz.py.</p>
+<p>The get_labels method returns a list of tuples which get prefixed by the name of the module of the approach, e.g., szz, as described above. The approach can return multiple tuples for multiple labels, e.g., [(‘corrective’, True),(‘maintenance’, False)].</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># needed imports</span>
+<span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">LabelSHARK</span><span class="p">,</span> <span class="n">BaseLabelApproach</span>
+
+<span class="c1"># SmartSHARK mongo models if needed</span>
+<span class="kn">from</span> <span class="nn">pycoshark.mongomodels</span> <span class="kn">import</span> <span class="n">Issue</span><span class="p">,</span> <span class="n">Event</span>
+
+
+<span class="nd">@LabelSHARK</span><span class="o">.</span><span class="n">approach</span>
+<span class="k">class</span> <span class="nc">MinimumApproach</span><span class="p">(</span><span class="n">BaseLabelApproach</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Short description of the approach.</span>
+
+<span class="sd">    Long description of the approach.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">set_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commit</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">get_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="s1">&#39;bugfix&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>The module of the approach should also be added to /docs/source/approaches.rst so that it shows in the documentation.</p>
+</div>
+<div class="section" id="extending-the-schema-for-a-new-approach">
+<h2>Extending the schema for a new approach<a class="headerlink" href="#extending-the-schema-for-a-new-approach" title="Permalink to this headline">¶</a></h2>
+<p>Take a look at the /plugin_packaging/schema.json. A new approach can add one or multiple fields to the labels for the commit.
+The naming is important the approach name which is also the name of the python module should be all lowercase and no dash or underscore.
+A new approach detecting bug-fixing commits named findallbugfix would be defined in approaches/findallbugfix.py and add a new field like this:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>&quot;collections&quot;: [
+    {
+        &quot;collection_name&quot;: &quot;commit&quot;,
+        &quot;fields&quot;: [
+        {
+           &quot;type&quot;:&quot;StructType&quot;,
+           &quot;logical_type&quot;:&quot;Nested&quot;,
+           &quot;field_name&quot;:&quot;labels&quot;,
+           &quot;desc&quot;: &quot;Labels for this commit.&quot;,
+           &quot;fields&quot;: [
+            ...
+              {
+                 &quot;type&quot;:&quot;BooleanType&quot;,
+                 &quot;logical_type&quot;:[&quot;CommitLabel&quot;, &quot;BugfixLabel&quot;],
+                 &quot;field_name&quot;:&quot;findallbugfix_bugfix&quot;,
+                 &quot;desc&quot;: &quot;True if this commit is a bug-fixing commit according to the findallbugfix approach, see https://smartshark.github.io/labelSHARK/approaches.html&quot;
+              },
+            ...
+            ]
+    ...
+</pre></div>
+</div>
+</div>
+<div class="section" id="special-case-missing-index-rights-in-mongdb">
+<h2>Special case: missing index rights in MongDB<a class="headerlink" href="#special-case-missing-index-rights-in-mongdb" title="Permalink to this headline">¶</a></h2>
+<p>If the user connecting to the MongoDB has no index rights, working with the models may fail.
+This workaround deletes the index from the meta information of the models:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">pycoshark.mongomodels</span> <span class="kn">import</span> <span class="n">Issue</span><span class="p">,</span> <span class="n">Event</span>
+
+<span class="k">def</span> <span class="nf">remove_index</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_meta</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;indexes&#39;</span> <span class="ow">in</span> <span class="n">tmp</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">del</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;indexes&#39;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;index_specs&#39;</span><span class="p">]</span>
+    <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;index_specs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">tmp</span>
+
+<span class="n">Issue</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="n">remove_index</span><span class="p">(</span><span class="n">Issue</span><span class="p">)</span>
+<span class="n">Event</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="n">remove_index</span><span class="p">(</span><span class="n">Event</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="API Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to labelSHARK’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2017, Alexander Trautsch
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

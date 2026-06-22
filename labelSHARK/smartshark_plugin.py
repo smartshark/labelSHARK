@@ -11,10 +11,38 @@ import copy
 from core import LabelSHARK
 
 from mongoengine import connect, DoesNotExist
-from pycoshark.mongomodels import VCSSystem, Commit, Project
+from mongoengine.fields import DateTimeField, ListField, ObjectIdField
+from pycoshark.mongomodels import VCSSystem, Commit, Project, File
 from pycoshark.utils import create_mongodb_uri_string
 from pycoshark.utils import get_base_argparser
 
+VCS_DB_NAME = "v_c_s_system"
+
+if 'last_updated' not in VCSSystem._fields:
+    # Register the field dynamically so it doesn't crash on instantiation
+    VCSSystem._fields['last_updated'] = DateTimeField(db_field='last_updated', default=None)
+    VCSSystem._db_field_map['last_updated'] = 'last_updated'
+
+if 'collection_date' in VCSSystem._fields:
+    VCSSystem._fields['collection_date'].required = False
+
+    for model_class in [Commit, File, VCSSystem]:
+        if 'vcs_system_ids' not in model_class._fields:
+            model_class._fields['vcs_system_ids'] = ListField(ObjectIdField(), db_field='vcs_system_ids', default=list)
+            model_class._db_field_map['vcs_system_ids'] = 'vcs_system_ids'
+    
+#     # Relax strict compliance validation constraints on legacy singular keys
+#     if 'vcs_system_id' in model_class._fields:
+#         model_class._fields['vcs_system_id'].required = False
+
+# # Specifically relax requirements for the timestamp fields on VCSSystem
+# if 'last_updated' not in VCSSystem._fields:
+#     VCSSystem._fields['last_updated'] = DateTimeField(db_field='last_updated', default=None)
+#     VCSSystem._db_field_map['last_updated'] = 'last_updated'
+
+# if 'collection_date' in VCSSystem._fields:
+#     VCSSystem._fields['collection_date'].required = False
+# ============================================================
 
 def remove_index(cls):
     tmp = copy.deepcopy(cls._meta)
@@ -60,7 +88,24 @@ def main(args):
         log.error('Project %s not found!' % args.project_name)
         sys.exit(1)
 
+    for model_class in [VCSSystem, Commit, Project, File]:
+        try:
+            model_class._meta['strict'] = False
+            logging.info(f"Successfully relaxed {model_class.__name__} strict schema validation constraints.")
+        except Exception as e:
+            logging.warning(f"Could not relax {model_class.__name__} validation. Error: {e}")
     vcs = VCSSystem.objects(project_id=project_id).get()
+    # db_client = VCSSystem._get_db()
+    # raw_collection = db_client[VCS_DB_NAME]
+    # logging.info("Raw collection: {}".format(raw_collection))
+    
+    # vcs_system_doc = raw_collection.find_one({"project_id": project_id})
+
+    # if not vcs_system_doc:
+    #     raise DoesNotExist(f"Raw MongoDB lookup failed to find project_id {project_id} in collection '{raw_collection.name}'")
+        
+    # # Inflate it back into an object so linkSHARK works natively
+    # vcs = VCSSystem._from_son(vcs_system_doc)
 
     log.info("Starting commit labeling")
 
@@ -78,11 +123,10 @@ def main(args):
 
     # add specific configs
     labelshark = LabelSHARK()
-    commit_count = Commit.objects(vcs_system_id=vcs.id).count()
+    commit_count = Commit.objects(__raw__={"vcs_system_ids": vcs.id}).count()
 
-    for i,commit in enumerate(Commit.objects(vcs_system_id=vcs.id).only('id', 'revision_hash', 'vcs_system_id', 'message', 'linked_issue_ids', 'parents', 'fixed_issue_ids', 'szz_issue_ids').timeout(False)):
-        if i%100 == 0:
-            log.info("%i/%i  commits finished", i, commit_count)
+    for i,commit in enumerate(Commit.objects(__raw__={"vcs_system_ids": vcs.id}).only('id', 'revision_hash', 'vcs_system_ids', 'message', 'linked_issue_ids', 'parents', 'fixed_issue_ids', 'szz_issue_ids').timeout(False)):
+        log.info("%i/%i  commits finished", i, commit_count)
         labelshark.set_commit(commit)
         labels = labelshark.get_labels()
 

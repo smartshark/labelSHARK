@@ -15,7 +15,7 @@ setup(
     name='labelSHARK',
     version='2.2.1',
     description='Commit labeling for smartSHARK.',
-    install_requires=['pandas', 'mongoengine', 'pymongo', 'pycoshark>=1.3.1', 'skift',
+    install_requires=['pandas', 'mongoengine', 'pymongo', 'pycoshark==1.4.5', 'skift',
                       'fasttext @ https://github.com/facebookresearch/fastText/tarball/master#egg-fasttext-0.10.0',],
     dependency_links=['https://github.com/facebookresearch/fastText/tarball/master#egg-fasttext-0.10.0'],
     author='atrautsch',

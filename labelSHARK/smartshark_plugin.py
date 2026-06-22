@@ -16,33 +16,12 @@ from pycoshark.mongomodels import VCSSystem, Commit, Project, File
 from pycoshark.utils import create_mongodb_uri_string
 from pycoshark.utils import get_base_argparser
 
-# VCS_DB_NAME = "v_c_s_system"
-
 if 'last_updated' not in VCSSystem._fields:
-    # Register the field dynamically so it doesn't crash on instantiation
     VCSSystem._fields['last_updated'] = DateTimeField(db_field='last_updated', default=None)
     VCSSystem._db_field_map['last_updated'] = 'last_updated'
 
 if 'collection_date' in VCSSystem._fields:
     VCSSystem._fields['collection_date'].required = False
-
-    # for model_class in [Commit, File, VCSSystem]:
-    #     if 'vcs_system_ids' not in model_class._fields:
-    #         model_class._fields['vcs_system_ids'] = ListField(ObjectIdField(), db_field='vcs_system_ids', default=list)
-    #         model_class._db_field_map['vcs_system_ids'] = 'vcs_system_ids'
-    
-#     # Relax strict compliance validation constraints on legacy singular keys
-#     if 'vcs_system_id' in model_class._fields:
-#         model_class._fields['vcs_system_id'].required = False
-
-# # Specifically relax requirements for the timestamp fields on VCSSystem
-# if 'last_updated' not in VCSSystem._fields:
-#     VCSSystem._fields['last_updated'] = DateTimeField(db_field='last_updated', default=None)
-#     VCSSystem._db_field_map['last_updated'] = 'last_updated'
-
-# if 'collection_date' in VCSSystem._fields:
-#     VCSSystem._fields['collection_date'].required = False
-# ============================================================
 
 def remove_index(cls):
     tmp = copy.deepcopy(cls._meta)
@@ -95,17 +74,6 @@ def main(args):
         except Exception as e:
             logging.warning(f"Could not relax {model_class.__name__} validation. Error: {e}")
     vcs = VCSSystem.objects(project_id=project_id).get()
-    # db_client = VCSSystem._get_db()
-    # raw_collection = db_client[VCS_DB_NAME]
-    # logging.info("Raw collection: {}".format(raw_collection))
-    
-    # vcs_system_doc = raw_collection.find_one({"project_id": project_id})
-
-    # if not vcs_system_doc:
-    #     raise DoesNotExist(f"Raw MongoDB lookup failed to find project_id {project_id} in collection '{raw_collection.name}'")
-        
-    # # Inflate it back into an object so linkSHARK works natively
-    # vcs = VCSSystem._from_son(vcs_system_doc)
 
     log.info("Starting commit labeling")
 

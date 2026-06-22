@@ -70,9 +70,9 @@ def main(args):
     for model_class in [VCSSystem, Commit, Project, File]:
         try:
             model_class._meta['strict'] = False
-            logging.info(f"Successfully relaxed {model_class.__name__} strict schema validation constraints.")
+            log.info(f"Successfully relaxed {model_class.__name__} strict schema validation constraints.")
         except Exception as e:
-            logging.warning(f"Could not relax {model_class.__name__} validation. Error: {e}")
+            log.warning(f"Could not relax {model_class.__name__} validation. Error: {e}")
     vcs = VCSSystem.objects(project_id=project_id).get()
 
     log.info("Starting commit labeling")

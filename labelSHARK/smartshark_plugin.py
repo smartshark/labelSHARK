@@ -16,7 +16,7 @@ from pycoshark.mongomodels import VCSSystem, Commit, Project, File
 from pycoshark.utils import create_mongodb_uri_string
 from pycoshark.utils import get_base_argparser
 
-VCS_DB_NAME = "v_c_s_system"
+# VCS_DB_NAME = "v_c_s_system"
 
 if 'last_updated' not in VCSSystem._fields:
     # Register the field dynamically so it doesn't crash on instantiation
@@ -26,10 +26,10 @@ if 'last_updated' not in VCSSystem._fields:
 if 'collection_date' in VCSSystem._fields:
     VCSSystem._fields['collection_date'].required = False
 
-    for model_class in [Commit, File, VCSSystem]:
-        if 'vcs_system_ids' not in model_class._fields:
-            model_class._fields['vcs_system_ids'] = ListField(ObjectIdField(), db_field='vcs_system_ids', default=list)
-            model_class._db_field_map['vcs_system_ids'] = 'vcs_system_ids'
+    # for model_class in [Commit, File, VCSSystem]:
+    #     if 'vcs_system_ids' not in model_class._fields:
+    #         model_class._fields['vcs_system_ids'] = ListField(ObjectIdField(), db_field='vcs_system_ids', default=list)
+    #         model_class._db_field_map['vcs_system_ids'] = 'vcs_system_ids'
     
 #     # Relax strict compliance validation constraints on legacy singular keys
 #     if 'vcs_system_id' in model_class._fields:
@@ -123,9 +123,11 @@ def main(args):
 
     # add specific configs
     labelshark = LabelSHARK()
-    commit_count = Commit.objects(__raw__={"vcs_system_ids": vcs.id}).count()
+    # commit_count = Commit.objects(__raw__={"vcs_system_ids": vcs.id}).count()
+    commit_count = Commit.objects(__raw__={"vcs_system_id": vcs.id}).count()
 
-    for i,commit in enumerate(Commit.objects(__raw__={"vcs_system_ids": vcs.id}).only('id', 'revision_hash', 'vcs_system_ids', 'message', 'linked_issue_ids', 'parents', 'fixed_issue_ids', 'szz_issue_ids').timeout(False)):
+    # for i,commit in enumerate(Commit.objects(__raw__={"vcs_system_ids": vcs.id}).only('id', 'revision_hash', 'vcs_system_ids', 'message', 'linked_issue_ids', 'parents', 'fixed_issue_ids', 'szz_issue_ids').timeout(False)):
+    for i,commit in enumerate(Commit.objects(__raw__={"vcs_system_id": vcs.id}).only('id', 'revision_hash', 'vcs_system_id', 'message', 'linked_issue_ids', 'parents', 'fixed_issue_ids', 'szz_issue_ids').timeout(False)):
         log.info("%i/%i  commits finished", i, commit_count)
         labelshark.set_commit(commit)
         labels = labelshark.get_labels()

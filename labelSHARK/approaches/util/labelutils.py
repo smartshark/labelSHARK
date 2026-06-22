@@ -1,12 +1,13 @@
 import logging
 
-from pycoshark.mongomodels import IssueEvent, IssueSystem
+from pycoshark.mongomodels import Event, IssueSystem
 from pycoshark.utils import jira_is_resolved_and_fixed
 
 log = logging.getLogger('labelSHARK')
 
 def _get_its(issue):
-    val = getattr(issue, 'issue_system_ids', None)
+    # val = getattr(issue, 'issue_system_ids', None)
+    val = getattr(issue, 'issue_system_id', None)
     sys_id = val[0] if isinstance(val, list) and val else val
     return IssueSystem.objects(id=sys_id).get()
 
@@ -63,7 +64,7 @@ def _bz_isbugfix(issue):
                 resolved = True
                 fixed |= issue.resolution == 'fixed'
 
-            for e in IssueEvent.objects.filter(issue_id=issue.id):
+            for e in Event.objects.filter(issue_id=issue.id):
                 resolved |= e.status is not None and e.status.lower() == 'status' and e.new_value is not None and e.new_value.lower() in [
                     'resolved', 'closed']
                 fixed |= e.status is not None and e.status.lower() == 'resolution' and e.new_value is not None and e.new_value.lower() == 'fixed'

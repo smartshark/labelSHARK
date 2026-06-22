@@ -1,7 +1,7 @@
 import logging
 import copy
 
-from pycoshark.mongomodels import Issue, IssueEvent
+from pycoshark.mongomodels import Issue, Event
 
 from core import LabelSHARK, BaseLabelApproach
 from approaches.util import labelutils
@@ -17,7 +17,7 @@ def remove_index(cls):
 
 
 Issue._meta = remove_index(Issue)
-IssueEvent._meta = remove_index(IssueEvent)
+Event._meta = remove_index(Event)
 
 
 @LabelSHARK.approach

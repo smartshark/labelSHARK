@@ -11,17 +11,9 @@ import copy
 from core import LabelSHARK
 
 from mongoengine import connect, DoesNotExist
-from mongoengine.fields import DateTimeField, ListField, ObjectIdField
 from pycoshark.mongomodels import VCSSystem, Commit, Project, File
 from pycoshark.utils import create_mongodb_uri_string
 from pycoshark.utils import get_base_argparser
-
-if 'last_updated' not in VCSSystem._fields:
-    VCSSystem._fields['last_updated'] = DateTimeField(db_field='last_updated', default=None)
-    VCSSystem._db_field_map['last_updated'] = 'last_updated'
-
-if 'collection_date' in VCSSystem._fields:
-    VCSSystem._fields['collection_date'].required = False
 
 def remove_index(cls):
     tmp = copy.deepcopy(cls._meta)
@@ -67,12 +59,6 @@ def main(args):
         log.error('Project %s not found!' % args.project_name)
         sys.exit(1)
 
-    for model_class in [VCSSystem, Commit, Project, File]:
-        try:
-            model_class._meta['strict'] = False
-            log.info(f"Successfully relaxed {model_class.__name__} strict schema validation constraints.")
-        except Exception as e:
-            log.warning(f"Could not relax {model_class.__name__} validation. Error: {e}")
     vcs = VCSSystem.objects(project_id=project_id).get()
 
     log.info("Starting commit labeling")

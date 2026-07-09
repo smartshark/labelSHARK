@@ -5,18 +5,18 @@ from pycoshark.utils import jira_is_resolved_and_fixed
 
 log = logging.getLogger('labelSHARK')
 
-def _get_its(issue):
+def _get_first_its(issue):
     val = getattr(issue, 'issue_system_ids', None)
-    sys_id = val[0] if isinstance(val, list) and val else val
-    return IssueSystem.objects(id=sys_id).get()
+    sys_id = val[0] if val else None
+    return IssueSystem.objects(id=sys_id).get() if sys_id else None
 
 def isbugfix(issue):
-    its = _get_its(issue)
+    its = _get_first_its(issue)
     if 'jira' in its.url:
         return _jira_isbugfix(issue)
     elif 'bugzilla' in its.url:
         return _bz_isbugfix(issue)
-    elif 'github' in its.url or 'api.github.com' in its.url:
+    elif 'github' in its.url:
         return _gh_isbugfix(issue)
     else:
         log.error('unknown ITS type for ITS url %s for bugfix labels' % its.url)
@@ -24,10 +24,10 @@ def isbugfix(issue):
 
 
 def isfeatureadd(issue):
-    its = _get_its(issue)
+    its = _get_first_its(issue)
     if 'jira' in its.url:
         return _is_jira_featureadd(issue)
-    elif 'github' in its.url or 'api.github.com' in its.url:
+    elif 'github' in its.url:
         return _gh_isfeatureadd(issue)
     else:
         log.error('unknown ITS type for ITS url %s for feature add labels' % its.url)

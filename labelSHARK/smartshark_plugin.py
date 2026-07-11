@@ -77,10 +77,11 @@ def main(args):
 
     # add specific configs
     labelshark = LabelSHARK()
-    commit_count = Commit.objects(__raw__={"vcs_system_ids": vcs.id}).count()
+    commit_count = Commit.objects(vcs_system_ids=vcs.id).count()
 
-    for i,commit in enumerate(Commit.objects(__raw__={"vcs_system_ids": vcs.id}).only('id', 'revision_hash', 'vcs_system_ids', 'message', 'linked_issue_ids', 'parents', 'fixed_issue_ids', 'szz_issue_ids').timeout(False)):
-        log.info("%i/%i  commits finished", i, commit_count)
+    for i,commit in enumerate(Commit.objects(vcs_system_ids=vcs.id).only('id', 'revision_hash', 'vcs_system_ids', 'message', 'linked_issue_ids', 'parents', 'fixed_issue_ids', 'szz_issue_ids').timeout(False)):
+        if i%100 == 0:
+            log.info("%i/%i  commits finished", i, commit_count)
         labelshark.set_commit(commit)
         labels = labelshark.get_labels()
 

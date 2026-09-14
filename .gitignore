@@ -4,3 +4,5 @@ docs/build
 labelSHARK/approaches/test.py
 .idea/
 plugin_packaging/*.tar
+*classifier/
+dist/

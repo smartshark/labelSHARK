@@ -1,7 +1,7 @@
 import logging
 import copy
 
-from pycoshark.mongomodels import Issue, Event
+from pycoshark.mongomodels import Issue, IssueEvent
 
 from core import LabelSHARK, BaseLabelApproach
 from approaches.util import labelutils
@@ -17,7 +17,7 @@ def remove_index(cls):
 
 
 Issue._meta = remove_index(Issue)
-Event._meta = remove_index(Event)
+IssueEvent._meta = remove_index(IssueEvent)
 
 
 @LabelSHARK.approach
@@ -44,7 +44,7 @@ class IssueOnly(BaseLabelApproach):
                     isfeatureadd |= labelutils.isfeatureadd(parent_issue)
 
         self._labels.append(('bugfix', isbugfix))
-        self._labels.append(('featureadd', isbugfix))
+        self._labels.append(('featureadd', isfeatureadd))
 
     def get_labels(self):
         return self._labels

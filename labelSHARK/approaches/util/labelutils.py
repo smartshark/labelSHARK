@@ -1,13 +1,17 @@
 import logging
 
-from pycoshark.mongomodels import Event, IssueSystem
+from pycoshark.mongomodels import IssueEvent, IssueSystem
 from pycoshark.utils import jira_is_resolved_and_fixed
 
 log = logging.getLogger('labelSHARK')
 
+def _get_first_its(issue):
+    val = getattr(issue, 'issue_system_ids', None)
+    sys_id = val[0] if val else None
+    return IssueSystem.objects(id=sys_id).get() if sys_id else None
 
 def isbugfix(issue):
-    its = IssueSystem.objects(id=issue.issue_system_id).get()
+    its = _get_first_its(issue)
     if 'jira' in its.url:
         return _jira_isbugfix(issue)
     elif 'bugzilla' in its.url:
@@ -20,9 +24,11 @@ def isbugfix(issue):
 
 
 def isfeatureadd(issue):
-    its = IssueSystem.objects(id=issue.issue_system_id).get()
+    its = _get_first_its(issue)
     if 'jira' in its.url:
         return _is_jira_featureadd(issue)
+    elif 'github' in its.url:
+        return _gh_isfeatureadd(issue)
     else:
         log.error('unknown ITS type for ITS url %s for feature add labels' % its.url)
         return False
@@ -57,7 +63,7 @@ def _bz_isbugfix(issue):
                 resolved = True
                 fixed |= issue.resolution == 'fixed'
 
-            for e in Event.objects.filter(issue_id=issue.id):
+            for e in IssueEvent.objects.filter(issue_id=issue.id):
                 resolved |= e.status is not None and e.status.lower() == 'status' and e.new_value is not None and e.new_value.lower() in [
                     'resolved', 'closed']
                 fixed |= e.status is not None and e.status.lower() == 'resolution' and e.new_value is not None and e.new_value.lower() == 'fixed'
@@ -70,3 +76,7 @@ def _gh_isbugfix(issue):
         return True
     else:
         return False
+
+def _gh_isfeatureadd(issue):
+    """GitHub features rely on custom labels which vary per project, so we default to False here to avoid false positives."""
+    return False

@@ -6,3 +6,4 @@ labelSHARK/approaches/test.py
 plugin_packaging/*.tar
 *classifier/
 dist/
+.DS_Store

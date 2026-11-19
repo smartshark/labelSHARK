@@ -12,7 +12,7 @@ def _get_first_its(issue):
 
 def isbugfix(issue):
     its = _get_first_its(issue)
-    if 'jira' in its.url:
+    if 'jira' in its.url.lower() or 'atlassian' in its.url.lower():
         return _jira_isbugfix(issue)
     elif 'bugzilla' in its.url:
         return _bz_isbugfix(issue)
@@ -25,7 +25,7 @@ def isbugfix(issue):
 
 def isfeatureadd(issue):
     its = _get_first_its(issue)
-    if 'jira' in its.url:
+    if 'jira' in its.url.lower() or 'atlassian' in its.url.lower():
         return _is_jira_featureadd(issue)
     elif 'github' in its.url:
         return _gh_isfeatureadd(issue)
@@ -37,26 +37,32 @@ def _is_jira_featureadd(issue):
     is_added_feature = False
     featureadd_types = set(['new feature','proposal','improvement','wish','planned work','request'])
     if not issue.issue_type:
-        log.warning('could not find issue type for issue %s' % issue.id)
+        log.warning('could not find issue type for issue %s' % issue.external_id)
     else:
         if issue.issue_type and issue.issue_type.lower() in featureadd_types:
-            is_added_feature = jira_is_resolved_and_fixed(issue)
+            try:
+                is_added_feature = jira_is_resolved_and_fixed(issue)
+            except AttributeError:
+                is_added_feature = False
     return is_added_feature
 
 def _jira_isbugfix(issue):
     is_fixed_bug = False
     if not issue.issue_type:
-        log.warning('could not find issue type for issue %s' % issue.id)
+        log.warning('could not find issue type for issue %s' % issue.external_id)
     else:
         if issue.issue_type and issue.issue_type.lower() == 'bug':
-            is_fixed_bug = jira_is_resolved_and_fixed(issue)
+            try:
+                is_fixed_bug = jira_is_resolved_and_fixed(issue)
+            except AttributeError:
+                is_fixed_bug = False
     return is_fixed_bug
 
 def _bz_isbugfix(issue):
     resolved = False
     fixed = False
     if not issue.issue_type:
-        log.error('could not find issue type for issue %s' % issue.id)
+        log.error('could not find issue type for issue %s' % issue.external_id)
     else:
         if issue.issue_type and issue.issue_type.lower() == 'bug':
             if issue.status in ['resolved', 'closed']:
